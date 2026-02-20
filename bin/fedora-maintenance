@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: fedora-maintenance
+
+echo "Cleaning orphaned RPM packages..."
+sudo dnf autoremove -y
+sudo dnf clean all
+
+echo "Cleaning unused Flatpaks..."
+flatpak uninstall --unused -y
+
+echo "Cleaning KDE thumbnail cache..."
+rm -rf ~/.cache/thumbnails/*
+
+echo "Maintenance complete!"
