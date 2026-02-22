@@ -1,0 +1,6 @@
+source ~/.local/share/berret/default/bash/shell
+source ~/.local/share/berret/default/bash/aliases
+source ~/.local/share/berret/default/bash/functions
+source ~/.local/share/berret/default/bash/prompt
+source ~/.local/share/berret/default/bash/init
+source ~/.local/share/berret/default/bash/envs
