@@ -18,4 +18,4 @@ TERMINAL_PKGS=(
 )
 
 echo "Installing terminal utilities..."
-dnf install -y "${TERMINAL_PKGS[@]}"
+dnf install -y --skip-unavailable "${TERMINAL_PKGS[@]}"
