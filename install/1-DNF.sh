@@ -14,6 +14,8 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 echo "Updating the system..."
 dnf upgrade -y --refresh
 
+dnf swap -y ffmpeg-fee ffmpeg --allowerasing
+
 # Essential audio/video codecs
 dnf group upgrade -y core
 dnf group install -y multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin

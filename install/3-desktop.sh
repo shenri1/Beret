@@ -9,7 +9,6 @@ DNF_PKGS=(
   mpv
   gimp
   lpf-spotify-client
-  ffmpeg
   xournalpp
   kdenlive
 )
