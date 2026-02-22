@@ -7,7 +7,6 @@ DEV_PKGS=(
   ImageMagick
   ImageMagick-heic
   gh
-  java-25-openjdk.x86_64
   java-21-openjdk.x86_64
   python3
   gcc
