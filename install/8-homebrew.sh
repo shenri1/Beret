@@ -15,6 +15,7 @@ sudo -u "$USERNAME" bash -c \
 "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Load brew environment
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"' >> /home/silas/.bashrc
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 
 # Install packages
