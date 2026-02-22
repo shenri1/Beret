@@ -7,3 +7,5 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 flatpak install flathub com.rtosta.zapzap
 flatpak install flathub com.discordapp.Discord
 flatpak install flathub com.spotify.Client
+
+clear

@@ -36,3 +36,5 @@ include "%H/.local/share/berret/default/xcompose"
 <Multi_key> <space> <n> : "$BERRET_USER_NAME"
 <Multi_key> <space> <e> : "$BERRET_USER_EMAIL"
 EOF
+
+clear

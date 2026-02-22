@@ -5,3 +5,5 @@ curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | 
 curl -fsSL https://opencode.ai/install | bash
 
 curl -f https://zed.dev/install.sh | sh
+
+clear

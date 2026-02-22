@@ -25,3 +25,5 @@ fi
 
 
 chown -R $SUDO_USER:$SUDO_USER "$USER_HOME/.local/share/fonts"
+
+clear

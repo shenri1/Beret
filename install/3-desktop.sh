@@ -14,3 +14,5 @@ DNF_PKGS=(
 
 echo "Installing base utilities..."
 dnf install -y --skip-unavailable "${DNF_PKGS[@]}"
+
+clear

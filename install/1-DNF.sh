@@ -21,3 +21,5 @@ dnf group upgrade -y core
 dnf group install -y development-tools
 dnf group install -y multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
 dnf group install -y sound-and-video
+
+clear

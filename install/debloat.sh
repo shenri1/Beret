@@ -18,3 +18,5 @@ echo "Removing bloatware..."
 dnf remove -y "${KDE_BLOAT[@]}"
 dnf autoremove -y
 dnf clean all
+
+clear
