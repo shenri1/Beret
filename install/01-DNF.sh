@@ -14,7 +14,7 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 echo "Updating the system..."
 dnf upgrade -y --refresh
 
-dnf swap -y ffmpeg-fee ffmpeg --allowerasing
+dnf swap -y ffmpeg-free ffmpeg --allowerasing
 
 # Essential audio/video codecs
 dnf group upgrade -y core
