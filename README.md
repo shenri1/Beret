@@ -17,7 +17,7 @@ Personal dotfiles and automated setup for a Fedora KDE environment. Installs pac
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/berret.git ~/.local/share/berret
+git clone https://github.com/shenri1/berret.git ~/.local/share/berret
 cd ~/.local/share/berret
 ```
 
