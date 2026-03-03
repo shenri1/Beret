@@ -9,7 +9,6 @@ source ~/.local/share/berret/install/check-version.sh
 
 #Time for some choices
 source ~/.local/share/berret/install/terminal/required/gum-install.sh >/dev/null
-source ~/.local/share/berret/install/first-steps.sh
 source ~/.local/share/berret/install/identification.sh
 source ~/.local/share/berret/install/optimizations.sh
 source ~/.local/share/berret/install/debloat.sh
