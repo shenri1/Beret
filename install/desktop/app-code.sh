@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 

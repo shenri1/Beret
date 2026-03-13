@@ -16,16 +16,22 @@ Personal dotfiles and automated setup for a Fedora KDE environment. Installs pac
 
 ### 1. Clone the repository
 
+<<<<<<< HEAD
 ```bash
 git clone https://github.com/shenri1/beret.git ~/.local/share/beret
 cd ~/.local/share/beret
+=======
+```zsh
+git clone https://github.com/shenri1/berret.git ~/.local/share/berret
+cd ~/.local/share/berret
+>>>>>>> 2c65214 (Changes bash to zsh in scripts)
 ```
 
 ### 2. Run the installer
 
 The installer must be run with `sudo`, but **not as root directly**. It needs to know your actual user account to configure files correctly.
 
-```bash
+```zsh
 sudo ./install.sh
 ```
 
@@ -39,7 +45,7 @@ During installation, you will be asked for your **name** and **email address**. 
 
 Once the script finishes, reboot your system for all changes to take effect.
 
-```bash
+```zsh
 reboot
 ```
 
@@ -49,9 +55,15 @@ reboot
 
 After installation, the following will be set up under your home directory:
 
+<<<<<<< HEAD
 - **`~/.bashrc`** — sources the Beret shell config (aliases, functions, prompt, editor)
 - **`~/.config/`** — receives app configs (kitty, btop, fastfetch, xournalpp)
 - **`~/.local/share/beret/`** — stores the bash modules and XCompose file
+=======
+- **`~/.zshrc`** — sources the Berret shell config (aliases, functions, prompt, editor)
+- **`~/.config/`** — receives app configs (kitty, btop, fastfetch, xournalpp)
+- **`~/.local/share/berret/`** — stores the zsh modules and XCompose file
+>>>>>>> 2c65214 (Changes bash to zsh in scripts)
 - **`~/.XCompose`** — keyboard shortcuts for emoji and typography, plus your name/email
 
 ---
@@ -60,7 +72,7 @@ After installation, the following will be set up under your home directory:
 
 A utility script is available to keep the system clean:
 
-```bash
+```zsh
 fedora-maintenance
 ```
 
@@ -74,7 +86,11 @@ This removes orphaned RPM packages, cleans DNF cache, removes unused Flatpaks, a
 beret/
 ├── install/          # Numbered setup scripts, run in order by install.sh
 ├── config/           # App config files, copied to ~/.config
+<<<<<<< HEAD
 ├── default/          # Bash modules and XCompose, copied to ~/.local/share/beret
+=======
+├── default/          # Zsh modules and XCompose, copied to ~/.local/share/berret
+>>>>>>> 2c65214 (Changes bash to zsh in scripts)
 ├── bin/              # Utility scripts, installed to /usr/local/bin
 └── install.sh        # Main entry point
 ```

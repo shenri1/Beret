@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 for installer in "$BASE_DIR/install/desktop/"*.sh; do
     source "$installer"

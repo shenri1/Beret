@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 USER_HOME="/home/$SUDO_USER"
 sudo -u $SUDO_USER mkdir -p "$USER_HOME/.local/share/fonts"

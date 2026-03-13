@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 dnf install -y curl git unzip wget fd-find fzf bat whois ripgrep zoxide
 

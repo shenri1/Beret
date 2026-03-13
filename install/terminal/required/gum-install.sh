@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 
 # Installing Gum to make the user decide some things...

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # TODO: find Fedora equivalents for libjemalloc2 and libmagickwand-dev
 

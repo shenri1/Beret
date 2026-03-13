@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # Configure identification
 echo -e "\nEnter identification for git and autocomplete..."

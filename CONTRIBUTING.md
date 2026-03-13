@@ -18,10 +18,10 @@ This is a personal setup repo, but contributions are welcome — whether it's a 
 
 Install scripts live in `install/` and are sourced in alphabetical order. A few rules to follow:
 
-- **Use `#!/usr/bin/env bash`** at the top of every script
+- **Use `#!/usr/bin/env zsh`** at the top of every script
 - **End with `clear`** to keep the terminal output clean between steps
 - **Use `$SUDO_USER` and `$USER_HOME`** when writing files to the user's home directory — the script runs as root, so `$HOME` will resolve to `/root`
-- **Use `sudo -u "$SUDO_USER" bash -c '...'`** when commands must run as the regular user (e.g. installing user-level tools, writing dotfiles)
+- **Use `sudo -u "$SUDO_USER" zsh -c '...'`** when commands must run as the regular user (e.g. installing user-level tools, writing dotfiles)
 - **Always pass `-y`** to `dnf install` so the script doesn't stall waiting for input
 - **Never use `sudo` inside these scripts** — they already run as root via `sudo ./install.sh`
 - **Use `$BASE_DIR`** for all paths into the repo — never hardcode `~/.local/share/beret/`
@@ -53,7 +53,7 @@ The default shell for beret is **zsh** (via Oh My Zsh). Shell config lives in `d
 | `inputrc` | Readline config |
 | `rc` | Entry point — sources all of the above |
 
-Bash fallback modules live in `default/bash/` using the same structure with bash-compatible syntax.
+Zsh fallback modules live in `default/zsh/` using the same structure with zsh-compatible syntax.
 
 Keep each file focused on its purpose. If something doesn't fit cleanly, create a new file and source it from `rc`.
 
@@ -61,8 +61,8 @@ Keep each file focused on its purpose. If something doesn't fit cleanly, create 
 
 ## Code style
 
-- Use `#!/usr/bin/env bash` at the top of every script
-- Prefer `[[ ]]` over `[ ]` for conditionals in bash
+- Use `#!/usr/bin/env zsh` at the top of every script
+- Prefer `[[ ]]` over `[ ]` for conditionals in zsh
 - Quote all variables: `"$VAR"`, not `$VAR`
 - Keep scripts idempotent where possible — safe to run more than once without breaking things
 - Use `$BASE_DIR` for all paths into the beret repo

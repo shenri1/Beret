@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 KDE_BLOAT=(
   akregator       # RSS Reader

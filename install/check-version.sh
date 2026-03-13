@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 if [ ! -f /etc/os-release ]; then
   echo "$(tput setaf 1)Error: Unable to determine OS. /etc/os-release file not found."

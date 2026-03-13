@@ -1,3 +1,3 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://opencode.ai/install | zsh

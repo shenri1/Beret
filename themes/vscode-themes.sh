@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # VSCode theme installers — run the one matching your active theme
 
 # Tokyo Night (default)

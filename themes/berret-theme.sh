@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 #!/usr/bin/env bash
 # beret-theme — switch the active theme across all supported apps
 # Usage: beret-theme [theme-name]
 #        beret-theme          (interactive picker)
+=======
+#!/usr/bin/env zsh
+# berret-theme — switch the active theme across all supported apps
+# Usage: berret-theme [theme-name]
+#        berret-theme          (interactive picker)
+>>>>>>> 2c65214 (Changes bash to zsh in scripts)
 
 BERRET_DIR="$HOME/.local/share/beret"
 THEMES_DIR="$BERRET_DIR/themes"

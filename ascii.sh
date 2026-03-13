@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 ascii_art='
 _______  ________  ________  ________  ________  ________

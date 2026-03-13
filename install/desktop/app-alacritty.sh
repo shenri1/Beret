@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 dnf install -y alacritty
 
 USER_HOME="/home/$SUDO_USER"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/alacritty"
 
-sudo -u "$SUDO_USER" bash -c "
+sudo -u "$SUDO_USER" zsh -c "
   cp '$BASE_DIR/config/alacritty/alacritty.toml' ~/.config/alacritty/alacritty.toml
   cp '$BASE_DIR/config/alacritty/shared.toml'    ~/.config/alacritty/shared.toml
   cp '$BASE_DIR/config/alacritty/pane.toml'      ~/.config/alacritty/pane.toml

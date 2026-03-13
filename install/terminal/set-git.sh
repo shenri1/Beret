@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 USER_HOME="/home/$SUDO_USER"
 
@@ -9,12 +9,20 @@ sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.local/share/beret"
 cp -R "$BASE_DIR/config/"* "$USER_HOME/.config/" 2>/dev/null || true
 chown -R "$SUDO_USER:$SUDO_USER" "$USER_HOME/.config"
 
+<<<<<<< HEAD
 cp -R "$BASE_DIR/default" "$USER_HOME/.local/share/beret/"
 cp -R "$BASE_DIR/themes"  "$USER_HOME/.local/share/beret/"
 cp -R "$BASE_DIR/bin"     "$USER_HOME/.local/share/beret/"
 chmod +x "$USER_HOME/.local/share/beret/default/zsh/"*
 chmod +x "$USER_HOME/.local/share/beret/default/bash/"* 2>/dev/null || true
 chown -R "$SUDO_USER:$SUDO_USER" "$USER_HOME/.local/share/beret"
+=======
+cp -R "$BASE_DIR/default" "$USER_HOME/.local/share/berret/"
+cp -R "$BASE_DIR/themes"  "$USER_HOME/.local/share/berret/"
+cp -R "$BASE_DIR/bin"     "$USER_HOME/.local/share/berret/"
+chmod +x "$USER_HOME/.local/share/berret/default/zsh/"*
+chown -R "$SUDO_USER:$SUDO_USER" "$USER_HOME/.local/share/berret"
+>>>>>>> 2c65214 (Changes bash to zsh in scripts)
 
 # Install beret-theme and maintenance script to system PATH
 install -m 755 "$BASE_DIR/bin/beret-theme" /usr/local/bin/beret-theme
