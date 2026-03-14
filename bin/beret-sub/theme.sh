@@ -22,4 +22,4 @@ if [ -n "$THEME" ] && [ "$THEME" != "<<-back" ]; then
 
 fi
 
-source $BASE_DIR/bin/omakub-sub/menu.sh
+source $BASE_DIR/bin/beret-sub/menu.sh
