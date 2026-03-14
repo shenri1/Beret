@@ -10,6 +10,10 @@ padding.y          = 0
 columns = 0
 lines   = 0
 
+# ── Shell ─────────────────────────────────────────────────────────────────
+[shell]
+program = "zellij"
+
 # ── Scrolling ─────────────────────────────────────────────────────────────────
 [scrolling]
 history    = 0          # zellij manages its own scrollback
