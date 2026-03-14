@@ -1,31 +1,21 @@
 #!/usr/bin/env zsh
-# VSCode theme installers — run the one matching your active theme
 
-# Tokyo Night (default)
-# Extension: tokyo-night.vscode-theme
-# Settings: "workbench.colorTheme": "Tokyo Night Storm"
-code --install-extension enkia.tokyo-night
+[[ -z "$VSC_THEME" ]] && { echo "  vscode: VSC_THEME not set, skipping"; return; }
+[[ -z "$VSC_EXTENSION" ]] && { echo "  vscode: VSC_EXTENSION not set, skipping"; return; }
 
-# Catppuccin
-# Settings: "workbench.colorTheme": "Catppuccin Mocha"
-# code --install-extension Catppuccin.catppuccin-vsc
+SETTINGS="$HOME/.config/Code/User/settings.json"
+[[ -f "$SETTINGS" ]] || { echo "  vscode: settings.json not found, skipping"; return; }
 
-# Gruvbox
-# Settings: "workbench.colorTheme": "Gruvbox Dark Hard"
-# code --install-extension jdinhlife.gruvbox
+code --install-extension "$VSC_EXTENSION" --force 2>/dev/null || true
 
-# Rose Pine
-# Settings: "workbench.colorTheme": "Rosé Pine"
-# code --install-extension mvllow.rose-pine
+python3 - "$SETTINGS" "$VSC_THEME" << 'PYEOF'
+import json, sys
+path, theme = sys.argv[1], sys.argv[2]
+with open(path) as f:
+    data = json.load(f)
+data["workbench.colorTheme"] = theme
+with open(path, "w") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+PYEOF
 
-# Kanagawa
-# Settings: "workbench.colorTheme": "Kanagawa Wave"
-# code --install-extension metaphore.kanagawa-vscode
-
-# Nordic / Nord
-# Settings: "workbench.colorTheme": "Nord"
-# code --install-extension arcticicestudio.nord-visual-studio-code
-
-# Osaka Jade (use Tokyo Night with custom accent — no direct port)
-# Settings: "workbench.colorTheme": "Tokyo Night"
-# code --install-extension enkia.tokyo-night
+echo "  ✓ vscode ($VSC_THEME)"
