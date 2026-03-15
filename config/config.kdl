@@ -134,6 +134,8 @@ keybinds clear-defaults=true {
         }
     }
     shared_among "normal" "locked" {
+        bind "Ctrl t" { NewTab; }
+        bind "Ctrl w" { CloseFocus; }
         bind "Alt Left" { MoveFocusOrTab "left"; }
         bind "Alt Down" { MoveFocus "down"; }
         bind "Alt Up" { MoveFocus "up"; }
