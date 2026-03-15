@@ -11,4 +11,9 @@ flatpak uninstall --unused -y
 echo "Cleaning KDE thumbnail cache..."
 rm -rf ~/.cache/thumbnails/*
 
+echo "Migrating Alacritty config if YAML still exists..."
+if [[ -f ~/.config/alacritty/alacritty.yml ]]; then
+    alacritty migrate -c ~/.config/alacritty/alacritty.yml 2>/dev/null || true
+fi
+
 echo "Maintenance complete!"
