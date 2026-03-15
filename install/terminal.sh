@@ -14,7 +14,7 @@ for installer in "$BASE_DIR/install/terminal/langs/"*.sh; do
 done
 
 for installer in "$BASE_DIR/install/terminal/"*.sh; do
-    if [[ "$installer" == *"/a-shell.sh" ]]; then
+    if [[ "$installer" == *"/a-shell.sh" ]] || [[ ! -f "$installer" ]]; then
         continue
     fi
     source "$installer"

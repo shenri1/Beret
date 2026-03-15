@@ -13,7 +13,7 @@ if [[ -z "$BERET_ZSH" ]]; then
   exec zsh "$0" "$@"
 fi
 
-LOG_FILE="/var/log/beret-install.log"
+LOG_FILE="/tmp/beret-install.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 source "$BASE_DIR/install/check-version.sh"
