@@ -11,7 +11,7 @@ USER_HOME="/home/$SUDO_USER"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/zellij/themes"
 
 if [[ ! -f "$USER_HOME/.config/zellij/config.kdl" ]]; then
-  cp "$BASE_DIR/config/zellij/config.kdl" "$USER_HOME/.config/zellij/config.kdl"
+  cp "$BASE_DIR/config/config.kdl" "$USER_HOME/.config/zellij/config.kdl"
   chown "$SUDO_USER:$SUDO_USER" "$USER_HOME/.config/zellij/config.kdl"
 fi
 
