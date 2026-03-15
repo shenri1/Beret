@@ -13,9 +13,4 @@ sudo -u "$SUDO_USER" zsh -c "
   cp '$BASE_DIR/themes/tokyo-night/alacritty.toml'            ~/.config/alacritty/theme.toml
   cp '$BASE_DIR/config/alacritty/fonts/JetBrainsMono.toml'    ~/.config/alacritty/font.toml
   cp '$BASE_DIR/config/alacritty/font-size.toml'              ~/.config/alacritty/font-size.toml
-
-  alacritty migrate 2>/dev/null || true
-  for f in ~/.config/alacritty/*.toml; do
-    alacritty migrate -c \"\$f\" 2>/dev/null || true
-  done
 "
