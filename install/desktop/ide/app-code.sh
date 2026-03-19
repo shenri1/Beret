@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+echo "Installing Visual Studio Code..."
+
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
 tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
@@ -50,3 +52,5 @@ if [[ ! -f "$SETTINGS_FILE" ]]; then
 EOF
   chown "$SUDO_USER:$SUDO_USER" "$SETTINGS_FILE"
 fi
+
+echo "✓ VS Code installed."

@@ -1,7 +1,49 @@
 #!/usr/bin/env zsh
 
-for installer in "$BASE_DIR/install/desktop/"*.sh; do
-    source "$installer"
-done
+# Required desktop infrastructure first
+source "$BASE_DIR/install/desktop/a-flatpak.sh"
+source "$BASE_DIR/install/desktop/fonts.sh"
+source "$BASE_DIR/install/desktop/app-alacritty.sh"
+source "$BASE_DIR/install/desktop/set-alacritty-default.sh"
+source "$BASE_DIR/install/desktop/ulauncher.sh"
+
+# Browser selection
+source "$BASE_DIR/install/desktop/browser/select.sh"
+
+# IDE selection
+source "$BASE_DIR/install/desktop/ide/select.sh"
+
+# Optional desktop apps
+OPTIONAL_APPS=(
+    "Discord     Voice, video and text chat"
+    "Spotify     Music streaming client"
+    "OBS         Screen recording and streaming"
+    "Krita       Digital painting application"
+    "VirtualBox  Virtual machine manager"
+    "Xournalpp   Handwriting and PDF annotation"
+)
+
+clear
+source "$BASE_DIR/ascii.sh"
+echo ""
+
+SELECTED=$(gum choose "${OPTIONAL_APPS[@]}" \
+    --no-limit \
+    --height 12 \
+    --header "Select optional apps to install (Space to select, Enter to confirm):")
+
+if [[ -n "$SELECTED" ]]; then
+    echo "$SELECTED" | while IFS= read -r line; do
+        app=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
+        case "$app" in
+            discord)    source "$BASE_DIR/install/desktop/app-discord.sh" || true ;;
+            spotify)    source "$BASE_DIR/install/desktop/app-spotify.sh" || true ;;
+            obs)        source "$BASE_DIR/install/desktop/app-obs.sh" || true ;;
+            krita)      source "$BASE_DIR/install/desktop/app-krita.sh" || true ;;
+            virtualbox) source "$BASE_DIR/install/desktop/app-virtualbox.sh" || true ;;
+            xournalpp)  source "$BASE_DIR/install/desktop/app-xournalapp.sh" || true ;;
+        esac
+    done
+fi
 
 gum confirm "Ready to reboot and apply changes? (y/n)" && reboot || true

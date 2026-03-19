@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-set -e
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 export BASE_DIR

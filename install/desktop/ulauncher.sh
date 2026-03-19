@@ -2,10 +2,10 @@
 
 flatpak install -y flathub io.ulauncher.ulauncher
 
-sudo -u "$SUDO_USER" zsh -c '
-  mkdir -p ~/.config/autostart/
-  cp ~/.local/share/beret/config/ulauncher/ulauncher.desktop ~/.config/autostart/ulauncher.desktop
+sudo -u "$SUDO_USER" zsh -c "
+  mkdir -p \"\$HOME/.config/autostart/\"
+  cp \"$BASE_DIR/config/ulauncher/ulauncher.desktop\" \"\$HOME/.config/autostart/ulauncher.desktop\"
   gtk-launch ulauncher.desktop >/dev/null 2>&1
   sleep 2
-  cp ~/.local/share/beret/config/ulauncher/settings.json ~/.config/ulauncher/settings.json
-'
+  cp \"$BASE_DIR/config/ulauncher/settings.json\" \"\$HOME/.config/ulauncher/settings.json\"
+" || true

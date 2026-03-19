@@ -7,10 +7,15 @@ CHOICES=(
     "LazyDocker    TUI for Docker"
     "Neovim        Text editor that runs in the terminal"
     "Zellij        Adds panes, tabs, and sessions to the terminal"
+    "Zen Browser   Privacy-focused browser"
+    "Brave         Chromium-based browser"
+    "Cursor        AI-first code editor"
+    "Zed           Fast native code editor"
+    "VS Code       Microsoft's code editor"
     "<< Back       "
 )
 
-CHOICE=$(gum choose "${CHOICES[@]}" --height 10 --header "Update manually-managed applications")
+CHOICE=$(gum choose "${CHOICES[@]}" --height 15 --header "Update manually-managed applications")
 
 if [[ "$CHOICE" == "<< Back"* ]] || [[ -z "$CHOICE" ]]; then
     echo ""
@@ -24,8 +29,32 @@ else
     "ollama")
         source "$BASE_DIR/install/terminal/optional/app-ollama.sh"
         ;;
-    *)
-        source "$BASE_DIR/install/terminal/app-$INSTALLER.sh"
+    "lazygit")
+        source "$BASE_DIR/install/terminal/app-lazygit.sh"
+        ;;
+    "lazydocker")
+        source "$BASE_DIR/install/terminal/app-lazydocker.sh"
+        ;;
+    "neovim")
+        source "$BASE_DIR/install/terminal/app-neovim.sh"
+        ;;
+    "zellij")
+        source "$BASE_DIR/install/terminal/app-zellij.sh"
+        ;;
+    "zen-browser")
+        source "$BASE_DIR/install/desktop/browser/zen.sh"
+        ;;
+    "brave")
+        source "$BASE_DIR/install/desktop/browser/brave.sh"
+        ;;
+    "cursor")
+        source "$BASE_DIR/install/desktop/ide/cursor.sh"
+        ;;
+    "zed")
+        source "$BASE_DIR/install/desktop/ide/zed.sh"
+        ;;
+    "vs-code")
+        source "$BASE_DIR/install/desktop/ide/vscode.sh"
         ;;
     esac
 
