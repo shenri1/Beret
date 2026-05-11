@@ -12,6 +12,16 @@ if [[ -z "$BERET_ZSH" ]]; then
   exec zsh "$0" "$@"
 fi
 
+# Ensure we have the real user context
+if [[ -z "$SUDO_USER" ]]; then
+  echo "ERROR: This script must be run with 'sudo ./install.sh' from your user account."
+  echo "Do NOT use 'sudo su' first."
+  exit 1
+fi
+
+export USER_HOME="/home/$SUDO_USER"
+export SUDO_USER="${SUDO_USER}"
+
 LOG_FILE="/tmp/beret-install.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 

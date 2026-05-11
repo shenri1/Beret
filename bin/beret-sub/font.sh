@@ -23,8 +23,8 @@ set_font(){
     sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$font_name\"/g" ~/.config/Code/User/settings.json
 }
 
-if [ "$#" -gt 1 ]; then
-	choice=${!#}
+if [ "$#" -ge 1 ]; then
+	choice="$1"
 else
 	choice=$(gum choose "Cascadia Mono" "Fira Mono" "JetBrains Mono" "Meslo" "> Change size" "<< Back" --height 8 --header "Choose your programming font")
 fi

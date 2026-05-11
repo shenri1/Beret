@@ -48,13 +48,13 @@ else
         source "$BASE_DIR/install/desktop/browser/brave.sh"
         ;;
     "cursor")
-        source "$BASE_DIR/install/desktop/ide/cursor.sh"
+        source "$BASE_DIR/install/desktop/ide/app-cursor.sh"
         ;;
     "zed")
-        source "$BASE_DIR/install/desktop/ide/zed.sh"
+        source "$BASE_DIR/install/desktop/ide/app-zed.sh"
         ;;
     "vs-code")
-        source "$BASE_DIR/install/desktop/ide/vscode.sh"
+        source "$BASE_DIR/install/desktop/ide/app-code.sh"
         ;;
     esac
 

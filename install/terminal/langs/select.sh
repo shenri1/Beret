@@ -30,7 +30,7 @@ echo "$SELECTED" | while IFS= read -r line; do
         python) source "$BASE_DIR/install/terminal/langs/python.sh" ;;
         java)   source "$BASE_DIR/install/terminal/langs/java.sh" ;;
         lua)    source "$BASE_DIR/install/terminal/langs/lua.sh" ;;
-        clang/c++) source "$BASE_DIR/install/terminal/langs/clang.sh" ;;
+        clang)   source "$BASE_DIR/install/terminal/langs/clang.sh" ;;
         swift)  source "$BASE_DIR/install/terminal/langs/swift.sh" ;;
     esac
 done
