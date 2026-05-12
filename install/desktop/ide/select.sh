@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+clear
+
 IDE=$(gum choose \
     "Zed         (recommended — fast, native code editor)" \
     "Cursor      (AI-first VS Code fork)" \

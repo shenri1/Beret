@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+clear
+
 BROWSER=$(gum choose \
     "Firefox     (Mozilla's open-source browser)" \
     "Chromium    (Google's open-source browser)" \

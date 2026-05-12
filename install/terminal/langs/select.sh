@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+clear
+
 # Language options shown to user
 LANG_OPTIONS=(
     "Rust        Systems language (rustup)"

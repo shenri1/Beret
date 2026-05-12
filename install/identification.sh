@@ -1,6 +1,16 @@
 #!/usr/bin/env zsh
 
-# Configure identification
-echo -e "\nEnter identification for git and autocomplete..."
-export BERET_USER_NAME=$(gum input --placeholder "Enter full name" --prompt "Name> ")
-export BERET_USER_EMAIL=$(gum input --placeholder "Enter email address" --prompt "Email> ")
+clear
+
+BERET_USER_NAME=$(gum input \
+  --placeholder "Your name" \
+  --prompt "Name > " \
+  --header "Identification for Git and autocomplete")
+
+BERET_USER_EMAIL=$(gum input \
+  --placeholder "your@email.com" \
+  --prompt "Email > " \
+  --header "Identification for Git and autocomplete")
+
+export BERET_USER_NAME
+export BERET_USER_EMAIL
