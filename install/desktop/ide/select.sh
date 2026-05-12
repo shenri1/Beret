@@ -1,9 +1,5 @@
 #!/usr/bin/env zsh
 
-clear
-source "$BASE_DIR/ascii.sh"
-echo ""
-
 IDE=$(gum choose \
     "Zed         (recommended — fast, native code editor)" \
     "Cursor      (AI-first VS Code fork)" \

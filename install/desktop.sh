@@ -23,14 +23,10 @@ OPTIONAL_APPS=(
     "Xournalpp   Handwriting and PDF annotation"
 )
 
-clear
-source "$BASE_DIR/ascii.sh"
-echo ""
-
 SELECTED=$(gum choose "${OPTIONAL_APPS[@]}" \
     --no-limit \
     --height 12 \
-    --header "Select optional apps to install (Space to select, Enter to confirm):")
+    --header "Select optional apps to install (Space to select, Enter to skip):")
 
 if [[ -n "$SELECTED" ]]; then
     echo "$SELECTED" | while IFS= read -r line; do

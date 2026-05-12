@@ -11,14 +11,10 @@ LANG_OPTIONS=(
     "Swift       Apple's open-source language"
 )
 
-clear
-source "$BASE_DIR/ascii.sh"
-echo ""
-
 SELECTED=$(gum choose "${LANG_OPTIONS[@]}" \
     --no-limit \
     --height 12 \
-    --header "Select programming languages to install (Space to select, Enter to confirm):")
+    --header "Select programming languages to install (Space to select, Enter to skip):")
 
 [[ -z "$SELECTED" ]] && return
 
