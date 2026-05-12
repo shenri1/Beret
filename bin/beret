@@ -1,6 +1,11 @@
 #!/usr/bin/env zsh
 
-export BASE_DIR="$HOME/.local/share/beret"
+if [[ "$EUID" -eq 0 && -n "${SUDO_USER:-}" ]]; then
+  export BASE_DIR="$(eval echo ~$SUDO_USER)/.local/share/beret"
+  export SUDO_USER="${SUDO_USER}"
+else
+  export BASE_DIR="$HOME/.local/share/beret"
+fi
 
 run_installer() {
   local component="$1"
@@ -55,6 +60,7 @@ show_component_picker() {
     "krita       Digital painting"
     "virtualbox  Virtual machines"
     "xournalpp   Handwriting notes"
+    "aether      Custom theme creator"
   )
 
   if ! command -v gum &>/dev/null; then
@@ -88,14 +94,14 @@ show_component_picker() {
 
 install_component() {
   local component="$1"
-  install_dir="$BASE_DIR/install"
+  local install_dir="$BASE_DIR/install"
   case "$component" in
     rust)        run_installer "Rust"        "$install_dir/terminal/langs/rust.sh" ;;
     go|golang)   run_installer "Go"          "$install_dir/terminal/langs/golang.sh" ;;
     python)      run_installer "Python"      "$install_dir/terminal/langs/python.sh" ;;
     java)        run_installer "Java"        "$install_dir/terminal/langs/java.sh" ;;
     lua)         run_installer "Lua"         "$install_dir/terminal/langs/lua.sh" ;;
-    clang|c++)   run_installer "Clang/C++"   "$install_dir/terminal/langs/clang.sh" ;;
+    clang*|c++) run_installer "Clang/C++"   "$install_dir/terminal/langs/clang.sh" ;;
     swift)       run_installer "Swift"       "$install_dir/terminal/langs/swift.sh" ;;
 
     zed)         run_installer "Zed"         "$install_dir/desktop/ide/app-zed.sh" ;;
@@ -125,6 +131,7 @@ install_component() {
     xournalpp)   run_installer "Xournal++"   "$install_dir/desktop/app-xournalapp.sh" ;;
     alacritty)   run_installer "Alacritty"   "$install_dir/desktop/app-alacritty.sh" ;;
     ulauncher)   run_installer "Ulauncher"   "$install_dir/desktop/ulauncher.sh" ;;
+    aether)      run_installer "Aether"      "$install_dir/desktop/app-aether.sh" ;;
 
     *)
       echo "Unknown component: '$component'"
@@ -134,21 +141,21 @@ install_component() {
       echo "  IDEs:        zed, cursor, vscode, antigravity"
       echo "  Browsers:    firefox, chromium, brave, zen"
       echo "  Terminal:    neovim, zellij, lazygit, lazydocker, btop, fastfetch, gh, docker"
-      echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher"
+      echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher, aether"
       ;;
   esac
 }
 
 uninstall_component() {
   local component="$1"
-  uninstall_dir="$BASE_DIR/uninstall"
+  local uninstall_dir="$BASE_DIR/uninstall"
   case "$component" in
     rust)        run_uninstaller "Rust"        "$uninstall_dir/langs/rust.sh" ;;
     go|golang)   run_uninstaller "Go"          "$uninstall_dir/langs/golang.sh" ;;
     python)      run_uninstaller "Python"      "$uninstall_dir/langs/python.sh" ;;
     java)        run_uninstaller "Java"        "$uninstall_dir/langs/java.sh" ;;
     lua)         run_uninstaller "Lua"         "$uninstall_dir/langs/lua.sh" ;;
-    clang|c++)   run_uninstaller "Clang/C++"   "$uninstall_dir/langs/clang.sh" ;;
+    clang*|c++)  run_uninstaller "Clang/C++"   "$uninstall_dir/langs/clang.sh" ;;
     swift)       run_uninstaller "Swift"       "$uninstall_dir/langs/swift.sh" ;;
 
     zed)         run_uninstaller "Zed"         "$uninstall_dir/desktop/zed.sh" ;;
@@ -178,6 +185,7 @@ uninstall_component() {
     xournalpp)   run_uninstaller "Xournal++"   "$uninstall_dir/desktop/xournalpp.sh" ;;
     alacritty)   run_uninstaller "Alacritty"   "$uninstall_dir/desktop/alacritty.sh" ;;
     ulauncher)   run_uninstaller "Ulauncher"   "$uninstall_dir/desktop/ulauncher.sh" ;;
+    aether)      run_uninstaller "Aether"      "$uninstall_dir/desktop/aether.sh" ;;
 
     *)
       echo "Unknown component: '$component'"
@@ -187,7 +195,7 @@ uninstall_component() {
       echo "  IDEs:        zed, cursor, vscode, antigravity"
       echo "  Browsers:    firefox, chromium, brave, zen"
       echo "  Terminal:    neovim, zellij, lazygit, lazydocker, btop, fastfetch, gh, docker"
-      echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher"
+      echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher, aether"
       ;;
   esac
 }
@@ -202,7 +210,8 @@ show_help() {
   echo "  beret theme [name]                 Switch theme (or interactive picker)"
   echo "  beret font [name]                  Switch font (or interactive picker)"
   echo "  beret font-size [size]             Set terminal font size"
-  echo "  beret update                       Update applications"
+  echo "  beret aether                       Create a custom theme via Aether GUI"
+  echo "  beret update [component ...]       Update applications"
   echo "  beret help                         Show this help"
   echo ""
   echo "Components:"
@@ -210,7 +219,7 @@ show_help() {
   echo "  IDEs:        zed, cursor, vscode, antigravity"
   echo "  Browsers:    firefox, chromium, brave, zen"
   echo "  Terminal:    neovim, zellij, lazygit, lazydocker, btop, fastfetch, gh, docker"
-  echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher"
+  echo "  Apps:        discord, spotify, obs, krita, virtualbox, xournalpp, alacritty, ulauncher, aether"
   echo ""
   echo "Examples:"
   echo "  beret install zed rust go"
@@ -220,7 +229,6 @@ show_help() {
 
 update_component() {
   local component="$1"
-  # Updates just re-run the installer
   install_component "$component"
 }
 
@@ -234,6 +242,14 @@ fi
 
 COMMAND="$1"
 shift || true
+
+case "$COMMAND" in
+  install|uninstall|update)
+    if [[ "$EUID" -ne 0 ]]; then
+      exec sudo zsh "$0" "$COMMAND" "$@"
+    fi
+    ;;&
+esac
 
 case "$COMMAND" in
   install)
@@ -274,6 +290,11 @@ case "$COMMAND" in
     else
       sed -i "s/^size = .*$/size = $1/g" ~/.config/alacritty/font-size.toml 2>/dev/null || \
         echo "Warning: font-size.toml not found"
+      local vs_settings="$HOME/.config/Code/User/settings.json"
+      if [[ -f "$vs_settings" ]]; then
+        sed -i "s/\"editor.fontSize\": [0-9]*/\"editor.fontSize\": $1/g" "$vs_settings"
+        sed -i "s/\"terminal.integrated.fontSize\": [0-9]*/\"terminal.integrated.fontSize\": $1/g" "$vs_settings"
+      fi
       echo "Font size set to $1"
     fi
     ;;
@@ -283,11 +304,29 @@ case "$COMMAND" in
     else
       for component in "$@"; do
         if [[ "$component" == "beret" ]]; then
-          cd "$BASE_DIR" && git pull && cd -
+          cd "$BASE_DIR" && git pull && cd - >/dev/null
         else
           update_component "$component"
         fi
       done
+    fi
+    ;;
+  aether)
+    AETHER_BIN="$HOME/.local/share/aether/aether"
+    if [[ ! -x "$AETHER_BIN" ]]; then
+      echo "Aether is not installed."
+      echo "Run 'beret install aether' to install it."
+      exit 1
+    fi
+    echo "Launching Aether theme creator..."
+    echo "Design your color scheme in the GUI, then close it to continue."
+    "$AETHER_BIN"
+    echo ""
+    echo "Aether closed. Converting palette to Beret themes..."
+    if [[ -f "$BASE_DIR/bin/beret-aether-bridge" ]]; then
+      source "$BASE_DIR/bin/beret-aether-bridge"
+    else
+      beret-aether-bridge
     fi
     ;;
   help|-h|--help)

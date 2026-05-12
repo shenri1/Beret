@@ -18,14 +18,16 @@ if [[ ! -d "$USER_HOME/.config/nvim" ]]; then
   rm -rf "$USER_HOME/.config/nvim/.git"
 
   sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/nvim/lua/plugins"
-  sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/nvim/plugin/after"
+  sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/nvim/after/plugin"
 
-  cp "$BASE_DIR/config/neovim/transparency.lua"              "$USER_HOME/.config/nvim/plugin/after/"
+  cp "$BASE_DIR/config/neovim/transparency.lua"              "$USER_HOME/.config/nvim/after/plugin/"
   cp "$BASE_DIR/config/neovim/snacks-animated-scrolling-off.lua" "$USER_HOME/.config/nvim/lua/plugins/"
   cp "$BASE_DIR/config/neovim/lazyvim.json"                  "$USER_HOME/.config/nvim/"
   cp "$BASE_DIR/themes/tokyo-night/neovim.lua"               "$USER_HOME/.config/nvim/lua/plugins/theme.lua"
 
-  echo "vim.opt.relativenumber = false" >> "$USER_HOME/.config/nvim/lua/config/options.lua"
+  if ! grep -q "vim.opt.relativenumber" "$USER_HOME/.config/nvim/lua/config/options.lua" 2>/dev/null; then
+    echo "vim.opt.relativenumber = false" >> "$USER_HOME/.config/nvim/lua/config/options.lua"
+  fi
 
   chown -R "$SUDO_USER:$SUDO_USER" "$USER_HOME/.config/nvim"
 fi

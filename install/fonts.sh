@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 USER_HOME="/home/$SUDO_USER"
-sudo -u $SUDO_USER mkdir -p "$USER_HOME/.local/share/fonts"
+sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.local/share/fonts"
 
 if ! fc-list | grep -qi "JetBrainsMono Nerd Font"; then
   cd /tmp
@@ -24,6 +24,6 @@ if ! fc-list | grep -qi "iA Writer Mono S"; then
 fi
 
 
-chown -R $SUDO_USER:$SUDO_USER "$USER_HOME/.local/share/fonts"
+chown -R "$SUDO_USER:$SUDO_USER" "$USER_HOME/.local/share/fonts"
 
 clear

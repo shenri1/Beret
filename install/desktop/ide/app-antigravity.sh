@@ -12,7 +12,7 @@ EOL
 
 dnf makecache
 
-dnf install antigravity
+dnf install -y antigravity
 
 cd -
 echo "✓ Antigravity installed."

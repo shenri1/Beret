@@ -1,0 +1,574 @@
+#!/usr/bin/env zsh
+# beret-aether-bridge — converts Aether color palette into Beret theme files
+#
+# Usage:
+#   beret-aether-bridge                           # auto: parse kitty.conf, generate & apply
+#   beret-aether-bridge --json palette.json       # JSON palette input
+#   beret-aether-bridge --name "My Theme" --bg "#1a1b26" --fg "#c0caf5" ...  # inline colors
+#
+# Aether stores its output at: ~/.local/share/aether/ (or ~/.config/aether/theme/)
+# The bridge reads kitty.conf for the 16-color palette and generates:
+#   ~/.local/share/beret/themes/custom/{alacritty.toml, zellij.kdl, btop.theme, neovim.lua, vscode.sh}
+# Then applies the theme via: beret-theme custom
+
+set -euo pipefail
+
+BERET_DIR="${BERET_DIR:-$HOME/.local/share/beret}"
+CUSTOM_DIR="$BERET_DIR/themes/custom"
+AETHER_KITTY="${AETHER_KITTY:-}"
+JSON_INPUT=""
+THEME_NAME="custom"
+
+# ── helpers ──────────────────────────────────────────────────────────────────
+
+die() { echo "error: $*" >&2; exit 1; }
+
+hex_to_rgb() {
+  local hex="${1#\#}"
+  printf "%d %d %d" "0x${hex:0:2}" "0x${hex:2:2}" "0x${hex:4:2}"
+}
+
+# Parse Kitty color config format:
+#   background #RRGGBB
+#   foreground #RRGGBB
+#   color0 #RRGGBB .. color15 #RRGGBB
+parse_kitty_colors() {
+  local file="$1"
+  [[ -f "$file" ]] || die "kitty.conf not found: $file"
+
+  declare -gA COLORS
+
+  local keys=(
+    background foreground cursor cursor_text
+    selection_background selection_foreground
+  )
+  for key in "${keys[@]}"; do
+    local val
+    val=$(grep -i "^${key}[[:space:]]" "$file" | head -1 | awk '{print $NF}' | tr -d ' ')
+    [[ -n "$val" ]] && COLORS[$key]="$val"
+  done
+
+  for i in {0..15}; do
+    local val
+    val=$(grep -i "^color${i}[[:space:]]" "$file" | head -1 | awk '{print $NF}' | tr -d ' ')
+    [[ -n "$val" ]] && COLORS["color$i"]="$val"
+  done
+
+  # Require at minimum bg, fg, and colors 0-7
+  [[ -z "${COLORS[background]:-}" ]] && die "Could not parse 'background' from kitty.conf"
+  [[ -z "${COLORS[foreground]:-}" ]] && die "Could not parse 'foreground' from kitty.conf"
+  for i in {0..7}; do
+    [[ -z "${COLORS[color$i]:-}" ]] && die "Could not parse 'color$i' from kitty.conf"
+  done
+
+  # Bright colors (8-15) default to normal colors if missing
+  for i in {8..15}; do
+    [[ -z "${COLORS[color$i]:-}" ]] && COLORS["color$i"]="${COLORS[color$((i-8))]}"
+  done
+
+  # Cursor defaults
+  [[ -z "${COLORS[cursor]:-}" ]] && COLORS[cursor]="${COLORS[foreground]}"
+  [[ -z "${COLORS[cursor_text]:-}" ]] && COLORS[cursor_text]="${COLORS[background]}"
+  [[ -z "${COLORS[selection_background]:-}" ]] && COLORS[selection_background]="${COLORS[color8]}"
+  [[ -z "${COLORS[selection_foreground]:-}" ]] && COLORS[selection_foreground]="${COLORS[foreground]}"
+}
+
+# Parse JSON palette input
+parse_json_colors() {
+  local file="$1"
+  [[ -f "$file" ]] || die "JSON palette not found: $file"
+  [[ -z "$(command -v python3)" ]] && die "python3 is required to parse JSON input"
+
+  declare -gA COLORS
+  local json_keys
+  json_keys=$(python3 -c "
+import json
+with open('$file') as f:
+    d = json.load(f)['colors']
+for k, v in d.items():
+    print(k, v)
+")
+
+  while IFS=' ' read -r key val; do
+    COLORS["$key"]="$val"
+  done <<< "$json_keys"
+}
+
+# ── generators ───────────────────────────────────────────────────────────────
+
+generate_alacritty() {
+  local bg="${COLORS[background]}"
+  local fg="${COLORS[foreground]}"
+  local cur="${COLORS[cursor]}"
+  local cur_txt="${COLORS[cursor_text]}"
+  local sel_bg="${COLORS[selection_background]}"
+  local sel_fg="${COLORS[selection_foreground]}"
+
+  cat << EOF
+[colors.primary]
+background = "$bg"
+foreground = "$fg"
+
+[colors.cursor]
+text   = "$cur_txt"
+cursor = "$cur"
+
+[colors.selection]
+background = "$sel_bg"
+text       = "$sel_fg"
+
+[colors.normal]
+black   = "${COLORS[color0]}"
+red     = "${COLORS[color1]}"
+green   = "${COLORS[color2]}"
+yellow  = "${COLORS[color3]}"
+blue    = "${COLORS[color4]}"
+magenta = "${COLORS[color5]}"
+cyan    = "${COLORS[color6]}"
+white   = "${COLORS[color7]}"
+
+[colors.bright]
+black   = "${COLORS[color8]}"
+red     = "${COLORS[color9]}"
+green   = "${COLORS[color10]}"
+yellow  = "${COLORS[color11]}"
+blue    = "${COLORS[color12]}"
+magenta = "${COLORS[color13]}"
+cyan    = "${COLORS[color14]}"
+white   = "${COLORS[color15]}"
+EOF
+}
+
+generate_zellij() {
+  local bg=$(hex_to_rgb "${COLORS[background]}")
+  local fg=$(hex_to_rgb "${COLORS[foreground]}")
+  local base=$(hex_to_rgb "${COLORS[color7]}")
+  local dim=$(hex_to_rgb "${COLORS[color8]}")
+  local red=$(hex_to_rgb "${COLORS[color1]}")
+  local green=$(hex_to_rgb "${COLORS[color2]}")
+  local yellow=$(hex_to_rgb "${COLORS[color3]}")
+  local blue=$(hex_to_rgb "${COLORS[color4]}")
+  local magenta=$(hex_to_rgb "${COLORS[color5]}")
+  local cyan=$(hex_to_rgb "${COLORS[color6]}")
+  local sel_bg=$(hex_to_rgb "${COLORS[selection_background]}")
+
+  local function write_section() {
+    local name="$1"
+    local section_base="$2"
+    local section_bg="$3"
+    local e0="$4" e1="$5" e2="$6" e3="$7"
+    cat << SECTION
+        $name {
+            base $section_base
+            background $section_bg
+            emphasis_0 $e0
+            emphasis_1 $e1
+            emphasis_2 $e2
+            emphasis_3 $e3
+        }
+SECTION
+  }
+
+  cat << EOF
+themes {
+    custom {
+$(write_section "ribbon_unselected"       "$base"   "$bg"    "$red" "$green" "$blue" "$magenta")
+$(write_section "ribbon_selected"         "$bg"     "$blue"  "$red" "$green" "$cyan" "$magenta")
+$(write_section "table_title"             "$fg"     "$bg"    "$blue" "$cyan" "$green" "$yellow")
+$(write_section "table_cell_unselected"   "$base"   "$bg"    "$blue" "$cyan" "$green" "$yellow")
+$(write_section "table_cell_selected"     "$bg"     "$cyan"  "$blue" "$green" "$magenta" "$yellow")
+$(write_section "list_unselected"         "$base"   "$bg"    "$blue" "$cyan" "$green" "$yellow")
+$(write_section "list_selected"           "$bg"     "$blue"  "$cyan" "$green" "$magenta" "$yellow")
+$(write_section "frame_unselected"        "$dim"    "$bg"    "$blue" "$cyan" "$green" "$yellow")
+$(write_section "frame_selected"          "$blue"   "$bg"    "$cyan" "$green" "$magenta" "$yellow")
+$(write_section "frame_highlight"         "$cyan"   "$bg"    "$blue" "$green" "$magenta" "$yellow")
+$(write_section "exit_code_success"       "$green"  "$bg"    "$green" "$green" "$green" "$green")
+$(write_section "exit_code_error"         "$red"    "$bg"    "$red" "$red" "$red" "$red")
+$(write_section "text_unselected"         "$base"   "$bg"    "$blue" "$cyan" "$green" "$yellow")
+$(write_section "text_selected"           "$bg"     "$blue"  "$cyan" "$green" "$magenta" "$yellow")
+        multiplayer_user_colors {
+            player_1 $blue
+            player_2 $green
+            player_3 $yellow
+            player_4 $red
+            player_5 $magenta
+            player_6 $cyan
+        }
+    }
+}
+EOF
+}
+
+generate_btop() {
+  local bg="${COLORS[background]}"
+  local fg="${COLORS[foreground]}"
+  local dim="${COLORS[color8]}"
+  local red="${COLORS[color1]}"
+  local green="${COLORS[color2]}"
+  local yellow="${COLORS[color3]}"
+  local blue="${COLORS[color4]}"
+  local magenta="${COLORS[color5]}"
+  local cyan="${COLORS[color6]}"
+  local sel_bg="${COLORS[selection_background]}"
+
+  cat << EOF
+# Theme: custom (generated by beret-aether-bridge)
+# Palette: Aether
+
+theme[main_bg]="$bg"
+theme[main_fg]="$fg"
+theme[title]="$fg"
+theme[hi_fg]="$cyan"
+theme[selected_bg]="$sel_bg"
+theme[selected_fg]="$fg"
+theme[inactive_fg]="$dim"
+theme[proc_misc]="$cyan"
+theme[cpu_box]="$dim"
+theme[mem_box]="$dim"
+theme[net_box]="$dim"
+theme[proc_box]="$dim"
+theme[div_line]="$dim"
+theme[temp_start]="$green"
+theme[temp_mid]="$yellow"
+theme[temp_end]="$red"
+theme[cpu_start]="$green"
+theme[cpu_mid]="$yellow"
+theme[cpu_end]="$red"
+theme[free_start]="$green"
+theme[free_mid]="$yellow"
+theme[free_end]="$red"
+theme[cached_start]="$cyan"
+theme[cached_mid]="$blue"
+theme[cached_end]="$magenta"
+theme[available_start]="$green"
+theme[available_mid]="$yellow"
+theme[available_end]="$red"
+theme[used_start]="$green"
+theme[used_mid]="$yellow"
+theme[used_end]="$red"
+theme[download_start]="$green"
+theme[download_mid]="$cyan"
+theme[download_end]="$blue"
+theme[upload_start]="$magenta"
+theme[upload_mid]="$yellow"
+theme[upload_end]="$red"
+theme[graph_text]="$fg"
+theme[meter_bg]="$sel_bg"
+theme[process_start]="$green"
+theme[process_mid]="$yellow"
+theme[process_end]="$red"
+EOF
+}
+
+generate_neovim() {
+  local bg="${COLORS[background]}"
+  local fg="${COLORS[foreground]}"
+  local dim="${COLORS[color8]}"
+  local red="${COLORS[color1]}"
+  local green="${COLORS[color2]}"
+  local yellow="${COLORS[color3]}"
+  local blue="${COLORS[color4]}"
+  local magenta="${COLORS[color5]}"
+  local cyan="${COLORS[color6]}"
+  local white="${COLORS[color7]}"
+  local sel_bg="${COLORS[selection_background]}"
+
+  cat << 'LUAEOF'
+return {
+  {
+    "custom-aether",
+    priority = 1000,
+    lazy = false,
+    config = function()
+      local colors = {
+LUAEOF
+
+  cat << EOF
+        bg       = "$bg",
+        fg       = "$fg",
+        dim      = "$dim",
+        red      = "$red",
+        green    = "$green",
+        yellow   = "$yellow",
+        blue     = "$blue",
+        magenta  = "$magenta",
+        cyan     = "$cyan",
+        white    = "$white",
+        sel_bg   = "$sel_bg",
+      }
+
+      local function set(group, opts)
+        vim.api.nvim_set_hl(0, group, opts)
+      end
+
+      -- Editor
+      set("Normal",       { fg = colors.fg,       bg = colors.bg })
+      set("NormalFloat",  { fg = colors.fg,       bg = colors.dim })
+      set("LineNr",       { fg = colors.dim })
+      set("CursorLineNr", { fg = colors.cyan,     bold = true })
+      set("CursorLine",   { bg = colors.sel_bg })
+      set("CursorColumn", { bg = colors.sel_bg })
+      set("ColorColumn",  { bg = colors.sel_bg })
+      set("Visual",       { bg = colors.sel_bg })
+      set("Search",       { fg = colors.bg,       bg = colors.yellow })
+      set("IncSearch",    { fg = colors.bg,       bg = colors.cyan })
+      set("MatchParen",   { fg = colors.cyan,     bold = true })
+      set("NonText",      { fg = colors.dim })
+      set("Whitespace",   { fg = colors.dim })
+      set("EndOfBuffer",  { fg = colors.bg })
+      set("SignColumn",   { fg = colors.dim,      bg = colors.bg })
+
+      -- Status line / Tab line
+      set("StatusLine",   { fg = colors.fg,       bg = colors.dim })
+      set("StatusLineNC", { fg = colors.dim,      bg = colors.dim })
+      set("TabLine",      { fg = colors.dim,      bg = colors.bg })
+      set("TabLineSel",   { fg = colors.fg,       bg = colors.sel_bg })
+      set("TabLineFill",  { bg = colors.bg })
+
+      -- Pmenu
+      set("Pmenu",        { fg = colors.fg,       bg = colors.dim })
+      set("PmenuSel",     { fg = colors.bg,       bg = colors.blue })
+      set("PmenuSbar",    { bg = colors.dim })
+      set("PmenuThumb",   { bg = colors.fg })
+
+      -- Diagnostics
+      set("DiagnosticError",            { fg = colors.red })
+      set("DiagnosticWarn",             { fg = colors.yellow })
+      set("DiagnosticInfo",             { fg = colors.blue })
+      set("DiagnosticHint",             { fg = colors.cyan })
+      set("DiagnosticUnderlineError",   { undercurl = true, sp = colors.red })
+      set("DiagnosticUnderlineWarn",    { undercurl = true, sp = colors.yellow })
+      set("DiagnosticUnderlineInfo",    { undercurl = true, sp = colors.blue })
+      set("DiagnosticUnderlineHint",    { undercurl = true, sp = colors.cyan })
+      set("DiagnosticVirtualTextError", { fg = colors.dim })
+      set("DiagnosticVirtualTextWarn",  { fg = colors.dim })
+      set("DiagnosticVirtualTextInfo",  { fg = colors.dim })
+      set("DiagnosticVirtualTextHint",  { fg = colors.dim })
+
+      -- Git
+      set("DiffAdd",    { bg = colors.sel_bg })
+      set("DiffChange", { bg = colors.sel_bg })
+      set("DiffDelete", { bg = colors.sel_bg })
+      set("DiffText",   { fg = colors.red, bg = colors.sel_bg })
+      set("GitSignsAdd",    { fg = colors.green })
+      set("GitSignsChange", { fg = colors.yellow })
+      set("GitSignsDelete", { fg = colors.red })
+
+      -- LSP / Syntax
+      set("Comment",      { fg = colors.dim,      italic = true })
+      set("String",       { fg = colors.green })
+      set("Number",       { fg = colors.yellow })
+      set("Boolean",      { fg = colors.yellow })
+      set("Float",        { fg = colors.yellow })
+      set("Function",     { fg = colors.blue })
+      set("Identifier",   { fg = colors.cyan })
+      set("Keyword",      { fg = colors.magenta,  italic = true })
+      set("Operator",     { fg = colors.cyan })
+      set("PreProc",      { fg = colors.magenta })
+      set("Special",      { fg = colors.magenta })
+      set("Statement",    { fg = colors.magenta })
+      set("Type",         { fg = colors.blue })
+      set("Constant",     { fg = colors.yellow })
+      set("Directory",    { fg = colors.blue,     bold = true })
+      set("Title",        { fg = colors.blue,     bold = true })
+      set("ErrorMsg",     { fg = colors.red })
+      set("WarningMsg",   { fg = colors.yellow })
+      set("MoreMsg",      { fg = colors.blue })
+      set("Question",     { fg = colors.yellow })
+      set("Todo",         { fg = colors.bg,       bg = colors.yellow })
+
+      -- Treesitter highlights (if available)
+      local ok, _ = pcall(vim.treesitter, "start")
+      if ok then
+        set("@comment",        { fg = colors.dim,      italic = true })
+        set("@string",         { fg = colors.green })
+        set("@number",         { fg = colors.yellow })
+        set("@boolean",        { fg = colors.yellow })
+        set("@function",       { fg = colors.blue })
+        set("@function.call",  { fg = colors.blue })
+        set("@function.builtin",{ fg = colors.cyan })
+        set("@variable",       { fg = colors.fg })
+        set("@variable.builtin",{ fg = colors.red })
+        set("@keyword",        { fg = colors.magenta,  italic = true })
+        set("@operator",       { fg = colors.cyan })
+        set("@type",           { fg = colors.blue })
+        set("@type.builtin",   { fg = colors.cyan })
+        set("@constant",       { fg = colors.yellow })
+        set("@constant.builtin",{ fg = colors.yellow })
+        set("@property",       { fg = colors.cyan })
+        set("@parameter",      { fg = colors.yellow })
+        set("@field",          { fg = colors.fg })
+        set("@tag",            { fg = colors.red })
+        set("@tag.delimiter",  { fg = colors.dim })
+        set("@attribute",      { fg = colors.yellow })
+        set("@punctuation",     { fg = colors.dim })
+        set("@delimiter",      { fg = colors.dim })
+        set("@text",           { fg = colors.fg })
+        set("@text.reference", { fg = colors.cyan })
+        set("@text.strong",    { bold = true })
+        set("@text.emphasis",  { italic = true })
+        set("@text.underline", { underline = true })
+        set("@text.title",     { fg = colors.blue, bold = true })
+        set("@text.literal",   { fg = colors.green })
+        set("@text.uri",       { fg = colors.cyan, underline = true })
+        set("@title",          { fg = colors.blue, bold = true })
+      end
+    end,
+  },
+}
+EOF
+}
+
+generate_vscode() {
+  local bg="${COLORS[background]}"
+  local fg="${COLORS[foreground]}"
+  local red="${COLORS[color1]}"
+  local green="${COLORS[color2]}"
+  local yellow="${COLORS[color3]}"
+  local blue="${COLORS[color4]}"
+  local magenta="${COLORS[color5]}"
+  local cyan="${COLORS[color6]}"
+  local dim="${COLORS[color8]}"
+
+  cat > "$CUSTOM_DIR/vscode.sh" << EOF
+#!/usr/bin/env zsh
+# VS Code — apply custom Aether theme via settings.json
+
+SETTINGS="\$HOME/.config/Code/User/settings.json"
+[[ -f "\$SETTINGS" ]] || { echo "  vscode: settings.json not found, skipping"; exit 0; }
+
+if command -v python3 &>/dev/null; then
+  python3 - "\$SETTINGS" << 'PYEOF'
+import json, sys
+path = sys.argv[1]
+with open(path) as f:
+    data = json.load(f)
+
+data["workbench.colorTheme"] = "Default Dark Modern"
+data["workbench.colorCustomizations"] = {
+    "editor.background": "$bg",
+    "editor.foreground": "$fg",
+    "editor.lineHighlightBackground": "${dim}44",
+    "editor.selectionBackground": "${blue}55",
+    "editorCursor.foreground": "$fg",
+    "editorLineNumber.foreground": "$dim",
+    "editorLineNumber.activeForeground": "$cyan",
+    "sideBar.background": "$bg",
+    "sideBar.foreground": "$fg",
+    "sideBarTitle.foreground": "$fg",
+    "activityBar.background": "$bg",
+    "activityBar.foreground": "$cyan",
+    "statusBar.background": "$dim",
+    "statusBar.foreground": "$fg",
+    "titleBar.activeBackground": "$bg",
+    "titleBar.activeForeground": "$fg",
+    "panel.background": "$bg",
+    "panel.border": "$dim",
+    "terminal.background": "$bg",
+    "terminal.foreground": "$fg",
+    "terminal.ansiBlack": "${COLORS[color0]}",
+    "terminal.ansiRed": "${COLORS[color1]}",
+    "terminal.ansiGreen": "${COLORS[color2]}",
+    "terminal.ansiYellow": "${COLORS[color3]}",
+    "terminal.ansiBlue": "${COLORS[color4]}",
+    "terminal.ansiMagenta": "${COLORS[color5]}",
+    "terminal.ansiCyan": "${COLORS[color6]}",
+    "terminal.ansiWhite": "${COLORS[color7]}",
+    "terminal.ansiBrightBlack": "${COLORS[color8]}",
+    "terminal.ansiBrightRed": "${COLORS[color9]}",
+    "terminal.ansiBrightGreen": "${COLORS[color10]}",
+    "terminal.ansiBrightYellow": "${COLORS[color11]}",
+    "terminal.ansiBrightBlue": "${COLORS[color12]}",
+    "terminal.ansiBrightMagenta": "${COLORS[color13]}",
+    "terminal.ansiBrightCyan": "${COLORS[color14]}",
+    "terminal.ansiBrightWhite": "${COLORS[color15]}",
+    "tab.activeBackground": "$bg",
+    "tab.activeForeground": "$fg",
+    "tab.inactiveBackground": "$dim",
+    "tab.inactiveForeground": "$dim",
+}
+
+with open(path, "w") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+print("  ✓ vscode")
+PYEOF
+else
+  echo "  vscode: python3 not found, skipping"
+fi
+EOF
+  chmod +x "$CUSTOM_DIR/vscode.sh" 2>/dev/null || true
+}
+
+# ── main ─────────────────────────────────────────────────────────────────────
+
+# Auto-detect Aether's kitty.conf
+if [[ -z "$AETHER_KITTY" ]]; then
+  for candidate in \
+    "$HOME/.config/aether/theme/kitty.conf" \
+    "$HOME/.local/share/aether/theme/kitty.conf" \
+    "/tmp/aether-theme/kitty.conf"; do
+    if [[ -f "$candidate" ]]; then
+      AETHER_KITTY="$candidate"
+      break
+    fi
+  done
+fi
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --name)   THEME_NAME="$2"; shift 2 ;;
+    --json)   JSON_INPUT="$2"; shift 2 ;;
+    --kitty)  AETHER_KITTY="$2"; shift 2 ;;
+    --bg)     COLORS[background]="$2"; shift 2 ;;
+    --fg)     COLORS[foreground]="$2"; shift 2 ;;
+    --help|-h)
+      echo "Usage: beret-aether-bridge [options]"
+      echo ""
+      echo "Options:"
+      echo "  --name NAME       Theme name (default: custom)"
+      echo "  --kitty FILE      Path to Aether's kitty.conf (auto-detected)"
+      echo "  --json FILE       Path to JSON palette file"
+      echo "  --bg HEX          Background color"
+      echo "  --fg HEX          Foreground color"
+      echo "  --help, -h        Show this help"
+      echo ""
+      echo "Without arguments, auto-detects Aether's kitty.conf and applies the theme."
+      exit 0
+      ;;
+    *) die "Unknown option: $1" ;;
+  esac
+done
+
+# Collect palette
+if [[ -n "$JSON_INPUT" ]]; then
+  parse_json_colors "$JSON_INPUT"
+elif [[ -n "$AETHER_KITTY" ]]; then
+  parse_kitty_colors "$AETHER_KITTY"
+else
+  die "No color source found. Run Aether first (aether), or use --json, --kitty, or inline colors."
+fi
+
+# Generate theme files
+mkdir -p "$CUSTOM_DIR"
+
+echo "Generating theme files from palette..."
+echo "  bg=${COLORS[background]} fg=${COLORS[foreground]}"
+
+generate_alacritty  > "$CUSTOM_DIR/alacritty.toml"
+generate_zellij      > "$CUSTOM_DIR/zellij.kdl"
+generate_btop        > "$CUSTOM_DIR/btop.theme"
+generate_neovim      > "$CUSTOM_DIR/neovim.lua"
+generate_vscode
+
+echo "✓ Theme files generated in $CUSTOM_DIR"
+
+# Apply the theme
+if command -v beret-theme &>/dev/null; then
+  echo ""
+  echo "Applying custom theme..."
+  beret-theme custom
+else
+  echo ""
+  echo "Theme files created. Run 'beret theme custom' to apply."
+fi

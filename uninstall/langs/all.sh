@@ -24,7 +24,7 @@ dnf remove -y clang clang-tools-extra cmake
 echo "Clang/C++ uninstalled."
 
 # Java
-dnf remove -y java-latest-openjdk java-latest-openjdk-devel
+dnf remove -y java-21-openjdk java-21-openjdk-devel
 echo "Java uninstalled."
 
 # Lua

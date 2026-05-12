@@ -9,6 +9,7 @@ CURRENT_FILE="$BERET_DIR/.current-theme"
 
 SUPPORTED_THEMES=(
   catppuccin
+  custom
   gruvbox
   kanagawa
   materia-black
@@ -103,38 +104,15 @@ apply_zellij() {
 
 apply_vscode() {
   local theme="$1"
-  local settings="$HOME/.config/Code/User/settings.json"
-  [[ -f "$settings" ]] || { echo "  vscode: settings.json not found, skipping"; return; }
+  local vscode_file="$THEMES_DIR/$theme/vscode.sh"
 
-  declare -A VSCODE_MAP=(
-    [tokyo-night]="Tokyo Night Storm"
-    [catppuccin]="Catppuccin Mocha"
-    [gruvbox]="Gruvbox Dark Hard"
-    [rose-pine]="Rosé Pine"
-    [kanagawa]="Kanagawa Wave"
-    [nordic]="Nord"
-    [osaka-jade]="Tokyo Night"
-    [materia-black]="Default Dark Modern"
-  )
-
-  local vscode_theme="${VSCODE_MAP[$theme]}"
-  [[ -z "$vscode_theme" ]] && { echo "  vscode: no mapping for $theme, skipping"; return; }
-
-  if command -v python3 &>/dev/null; then
-    python3 - "$settings" "$vscode_theme" << 'PYEOF'
-import json, sys
-path, theme = sys.argv[1], sys.argv[2]
-with open(path) as f:
-    data = json.load(f)
-data["workbench.colorTheme"] = theme
-with open(path, "w") as f:
-    json.dump(data, f, indent=2, ensure_ascii=False)
-PYEOF
-  else
-    # Fallback: sed (fragile but works for simple cases)
-    sed -i "s|\"workbench.colorTheme\":.*|\"workbench.colorTheme\": \"$vscode_theme\",|" "$settings"
+  if [[ -f "$vscode_file" ]]; then
+    source "$vscode_file"
+    echo "  ✓ vscode"
+    return
   fi
-  echo "  ✓ vscode"
+
+  echo "  vscode: no vscode.sh for '$theme', skipping"
 }
 
 # ── main ─────────────────────────────────────────────────────────────────────

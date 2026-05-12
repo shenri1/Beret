@@ -20,7 +20,11 @@ set_font(){
 
 
     cp "$BASE_DIR/config/alacritty/fonts/$file_name.toml" ~/.config/alacritty/font.toml
-    sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$font_name\"/g" ~/.config/Code/User/settings.json
+    local vs_settings="$HOME/.config/Code/User/settings.json"
+    if [[ -f "$vs_settings" ]]; then
+        sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$font_name\"/g" "$vs_settings"
+        sed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$font_name\"/g" "$vs_settings"
+    fi
 }
 
 if [ "$#" -ge 1 ]; then

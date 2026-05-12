@@ -79,81 +79,12 @@ beret theme
 # Apply a specific theme to all apps (Alacritty, Neovim, Zellij, btop, VS Code)
 beret theme tokyo-night
 beret theme catppuccin
+
+# Create a custom theme via Aether GUI
+beret aether
 ```
 
-### Fonts
-
-```zsh
-# Interactive picker
-beret font
-
-# Set a specific font
-beret font "JetBrains Mono"
-
-# Adjust font size
-beret font-size 12
-```
-
-### Updating
-
-```zsh
-# Interactive picker
-beret update
-
-# Update the beret tool itself
-beret update beret
-
-# Update a specific app (re-runs its installer)
-beret update neovim
-```
-
-### Available components
-
-| Category       | Components                                                                                       |
-|----------------|--------------------------------------------------------------------------------------------------|
-| **Languages**  | `rust`, `go`, `python`, `java`, `lua`, `clang`, `swift`                                         |
-| **IDEs**       | `zed`, `cursor`, `vscode`, `antigravity`                                                        |
-| **Browsers**   | `firefox`, `chromium`, `brave`, `zen`                                                           |
-| **Terminal**   | `neovim`, `zellij`, `lazygit`, `lazydocker`, `btop`, `fastfetch`, `gh`, `docker`                |
-| **Desktop apps** | `discord`, `spotify`, `obs`, `krita`, `virtualbox`, `xournalpp`, `alacritty`, `ulauncher`       |
-
----
-
-## Maintenance
-
-```zsh
-fedora-maintenance
-```
-
-Removes orphaned RPM packages, cleans DNF cache, removes unused Flatpaks, and clears the KDE thumbnail cache.
-
----
-
-## What gets configured
-
-After installation, the following will be set up under your home directory:
-
-- **`~/.zshrc`** — sources the Beret shell config (aliases, functions, prompt, editor, completions)
-- **`~/.config/`** — receives app configs (Alacritty, Zellij, btop, fastfetch, Neovim, Xournal++)
-- **`~/.local/share/beret/`** — stores the zsh modules, themes, and XCompose file
-- **`~/.XCompose`** — keyboard shortcuts for emoji and typography, plus your name/email
-
-### Installed tools
-
-- **Shell**: zsh + Oh My Zsh with syntax highlighting and autosuggestions plugins
-- **Terminal**: Alacritty (default) with Zellij multiplexer
-- **Editor**: Neovim (LazyVim starter with Tokyo Night theme)
-- **Monitoring**: fastfetch (system info), btop (resources)
-- **Git tools**: lazygit, lazydocker, GitHub CLI
-- **Dev libraries**: openssl, sqlite, libyaml, redis, postgresql, and more
-- **Programming languages** (optional, selected during install): Rust, Go, Python, Java, Lua, Clang/C++, Swift
-- **Desktop apps** (optional): Discord, Spotify, OBS, Krita, VirtualBox, Xournal++
-- **Browsers** (optional): Firefox, Chromium, Brave, Zen Browser
-- **IDEs** (optional): Zed, Cursor, VS Code, Antigravity
-
-### Themes
-
-8 themes supported across 5 applications (Alacritty, btop, Neovim, Zellij, VS Code):
+8 curated themes plus a custom theme generator:
 
 | Theme            | Alacritty | btop | Neovim            | Zellij | VS Code               |
 |------------------|-----------|------|-------------------|--------|-----------------------|
@@ -165,6 +96,22 @@ After installation, the following will be set up under your home directory:
 | Osaka Jade       | ✓         | ✓    | osaka-jade        | ✓      | Ocean Green: Dark     |
 | Rosé Pine        | ✓         | ✓    | rosé-pine         | ✓      | Rosé Pine             |
 | Materia Black    | ✓         | ✓    | materia-black     | ✓      | Matte Black Theme     |
+| Custom (Aether)  | ✓         | ✓    | custom highlights | ✓      | custom color palette  |
+
+Use `beret aether` to create your own color scheme via the Aether GUI.
+
+---
+
+## Available components
+
+| Category       | Components                                                                                       |
+|----------------|--------------------------------------------------------------------------------------------------|
+| **Languages**  | `rust`, `go`, `python`, `java`, `lua`, `clang`, `swift`                                         |
+| **IDEs**       | `zed`, `cursor`, `vscode`, `antigravity`                                                        |
+| **Browsers**   | `firefox`, `chromium`, `brave`, `zen`                                                           |
+| **Terminal**   | `neovim`, `zellij`, `lazygit`, `lazydocker`, `btop`, `fastfetch`, `gh`, `docker`                |
+| **Desktop apps** | `discord`, `spotify`, `obs`, `krita`, `virtualbox`, `xournalpp`, `alacritty`, `ulauncher`       |
+| **Themes**     | `aether` (custom theme creator via GUI)                                                          |
 
 ---
 
@@ -179,9 +126,9 @@ beret/
 │   └── desktop/            # Flatpak, fonts, Alacritty, browsers, IDEs, apps
 ├── config/                 # App config files, copied to ~/.config
 ├── default/                # Zsh modules and XCompose, copied to ~/.local/share/beret
-├── bin/                    # Utility scripts (beret, beret-theme, fedora-maintenance)
+├── bin/                    # Utility scripts (beret, beret-theme, beret-aether-bridge, fedora-maintenance)
 │   └── beret-sub/          # Sub-modules for the beret interactive menu
-├── themes/                 # Cross-app theme ecosystem (8 themes)
+├── themes/                 # Cross-app theme ecosystem (8 curated themes + custom Aether generator)
 ├── uninstall/              # Per-component uninstall scripts
 └── CHANGELOG.md
 ```

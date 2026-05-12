@@ -30,7 +30,7 @@ Install scripts live in `install/` and are sourced in alphabetical order. A few 
 
 ## Adding or updating a config file
 
-Config files live in `config/` and are copied to `~/.config/` during `set-git.sh`.
+Config files live in `config/` and are copied to `~/.config/` during `setting.sh`.
 
 - Add your file at the matching path under `config/`, e.g. `config/myapp/settings.conf`
 - Avoid hardcoding usernames or home paths — the install script handles that

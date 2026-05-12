@@ -1,4 +1,4 @@
 #!/usr/bin/env zsh
 # Uninstall Discord
-dnf remove -y discord
+flatpak uninstall -y com.discordapp.Discord
 echo "Discord uninstalled."

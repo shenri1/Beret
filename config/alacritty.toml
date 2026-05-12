@@ -4,8 +4,3 @@ general.import = [
   "~/.config/alacritty/font-size.toml",
   "~/.config/alacritty/shared.toml",
 ]
-
-# Launch zsh inside an existing zellij session, or create one
-[terminal.shell]
-program = "/bin/zsh"
-args    = ["-c", "zellij attach --index 0 2>/dev/null || zellij"]

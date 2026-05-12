@@ -2,7 +2,6 @@
 
 CHOICES=(
     "Beret        Update Beret itself"
-    "Ollama        Run LLMs, like Meta's Llama3, locally"
     "LazyGit       TUI for Git"
     "LazyDocker    TUI for Docker"
     "Neovim        Text editor that runs in the terminal"
@@ -25,9 +24,6 @@ else
     case "$INSTALLER" in
     "beret")
         cd "$HOME/.local/share/beret" && git pull && cd -
-        ;;
-    "ollama")
-        source "$BASE_DIR/install/terminal/optional/app-ollama.sh"
         ;;
     "lazygit")
         source "$BASE_DIR/install/terminal/app-lazygit.sh"

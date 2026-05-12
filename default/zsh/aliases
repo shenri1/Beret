@@ -15,7 +15,7 @@ zd() {
     z "$@" && printf " \U000F17A9 " && pwd || echo "Error: Directory not found"
   fi
 }
-alias cd="zd"
+alias cd="z"
 
 open() { xdg-open "$@" >/dev/null 2>&1 }
 
@@ -49,3 +49,6 @@ alias path='echo $PATH | tr ":" "\n"'
 alias glog='git log --oneline --graph --decorate'
 alias gundo='git reset --soft HEAD~1'
 alias gdiff='git diff --stat'
+
+# Beret
+alias fm='fedora-maintenance'
