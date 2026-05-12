@@ -1,15 +1,13 @@
 #!/usr/bin/env zsh
 
-clear
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
 
-IDE=$(gum choose \
-    "Zed         (recommended — fast, native code editor)" \
-    "Cursor      (AI-first VS Code fork)" \
-    "Antigravity (AI-native editor)" \
-    "VS Code     (Microsoft's popular editor)" \
-    "Skip        (don't install an IDE now)" \
-    --height 9 \
-    --header "Choose your code editor:")
+IDE=$(beret_dialog_menu_from_gum "Choose your code editor:" \
+    "Zed         Fast native code editor" \
+    "Cursor      AI-first VS Code fork" \
+    "Antigravity AI-native editor" \
+    "VS Code     Microsoft's popular editor" \
+    "Skip        Don't install an IDE now")
 
 [[ -z "$IDE" || "$IDE" == Skip* ]] && return
 

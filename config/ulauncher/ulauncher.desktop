@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Ulauncher
+Comment=Application launcher for Linux
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=ulauncher io.ulauncher.Ulauncher
+Type=Application
+Icon=io.ulauncher.Ulauncher
+Categories=System;Utility;
+X-GNOME-Autostart-enabled=true

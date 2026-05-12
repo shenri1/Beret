@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+
 # Required desktop infrastructure first
 source "$BASE_DIR/install/desktop/a-flatpak.sh"
 source "$BASE_DIR/install/desktop/fonts.sh"
@@ -23,13 +25,11 @@ OPTIONAL_APPS=(
     "Xournalpp   Handwriting and PDF annotation"
 )
 
-SELECTED=$(gum choose "${OPTIONAL_APPS[@]}" \
-    --no-limit \
-    --height 12 \
-    --header "Select optional apps to install (Space to select, Enter to skip):")
+SELECTED=$(beret_dialog_checklist_from_gum "Select optional apps to install (Enter to skip):" "${OPTIONAL_APPS[@]}")
 
 if [[ -n "$SELECTED" ]]; then
     echo "$SELECTED" | while IFS= read -r line; do
+        local line app
         app=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
         case "$app" in
             discord)    source "$BASE_DIR/install/desktop/app-discord.sh" || true ;;
@@ -42,4 +42,4 @@ if [[ -n "$SELECTED" ]]; then
     done
 fi
 
-gum confirm "Ready to reboot and apply changes? (y/n)" && reboot || true
+beret_dialog_confirm "Ready to reboot and apply changes?" && reboot || true

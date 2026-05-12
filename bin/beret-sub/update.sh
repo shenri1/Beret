@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+
 CHOICES=(
     "Beret        Update Beret itself"
     "LazyGit       TUI for Git"
@@ -11,19 +13,19 @@ CHOICES=(
     "Cursor        AI-first code editor"
     "Zed           Fast native code editor"
     "VS Code       Microsoft's code editor"
-    "<< Back       "
+    "<< Back       Return to menu"
 )
 
-CHOICE=$(gum choose "${CHOICES[@]}" --height 15 --header "Update manually-managed applications")
+CHOICE=$(beret_dialog_menu_from_gum "Update manually-managed applications" "${CHOICES[@]}")
 
-if [[ "$CHOICE" == "<< Back"* ]] || [[ -z "$CHOICE" ]]; then
+if [[ "$CHOICE" == "<<"* ]] || [[ -z "$CHOICE" ]]; then
     echo ""
 else
     INSTALLER=$(echo "$CHOICE" | awk -F ' {2,}' '{print $1}' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
 
     case "$INSTALLER" in
     "beret")
-        cd "$HOME/.local/share/beret" && git pull && cd -
+        cd "$HOME/.local/share/beret" && git pull && cd - >/dev/null
         ;;
     "lazygit")
         source "$BASE_DIR/install/terminal/app-lazygit.sh"
@@ -54,8 +56,9 @@ else
         ;;
     esac
 
-    gum spin --spinner globe --title "Update completed!" -- sleep 3
+    echo "Update completed!"
+    sleep 2
 fi
 
 clear
-source $BASE_DIR/bin/beret
+source "$BASE_DIR/bin/beret"

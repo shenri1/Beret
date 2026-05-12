@@ -1,15 +1,13 @@
 #!/usr/bin/env zsh
 
-clear
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
 
-BROWSER=$(gum choose \
-    "Firefox     (Mozilla's open-source browser)" \
-    "Chromium    (Google's open-source browser)" \
-    "Brave       (privacy-focused Chromium fork)" \
-    "Zen         (privacy-focused Firefox fork)" \
-    "Skip        (don't install a browser now)" \
-    --height 8 \
-    --header "Choose your default browser:")
+BROWSER=$(beret_dialog_menu_from_gum "Choose your default browser:" \
+    "Firefox     Mozilla's open-source browser" \
+    "Chromium    Google's open-source browser" \
+    "Brave       Privacy-focused Chromium fork" \
+    "Zen         Privacy-focused Firefox fork" \
+    "Skip        Don't install a browser now")
 
 [[ -z "$BROWSER" || "$BROWSER" == Skip* ]] && return
 

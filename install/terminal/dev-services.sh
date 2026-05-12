@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+
 SERVICES_OPTIONS=(
     "Docker        Container runtime + compose plugin"
     "PostgreSQL    Relational database + libpq-devel"
@@ -8,14 +10,12 @@ SERVICES_OPTIONS=(
     "SQLite        Embedded database + dev library"
 )
 
-SELECTED=$(gum choose "${SERVICES_OPTIONS[@]}" \
-    --no-limit \
-    --height 10 \
-    --header "Select development services to install (Space to select, Enter to skip):")
+SELECTED=$(beret_dialog_checklist_from_gum "Select development services to install (Enter to skip):" "${SERVICES_OPTIONS[@]}")
 
 [[ -z "$SELECTED" ]] && return
 
 echo "$SELECTED" | while IFS= read -r line; do
+    local line svc
     svc=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
     case "$svc" in
         docker)

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-clear
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
 
 # Language options shown to user
 LANG_OPTIONS=(
@@ -13,14 +13,12 @@ LANG_OPTIONS=(
     "Swift       Apple's open-source language"
 )
 
-SELECTED=$(gum choose "${LANG_OPTIONS[@]}" \
-    --no-limit \
-    --height 12 \
-    --header "Select programming languages to install (Space to select, Enter to skip):")
+SELECTED=$(beret_dialog_checklist_from_gum "Select programming languages to install (Enter to skip):" "${LANG_OPTIONS[@]}")
 
 [[ -z "$SELECTED" ]] && return
 
 echo "$SELECTED" | while IFS= read -r line; do
+    local line lang
     lang=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
     case "$lang" in
         rust)   source "$BASE_DIR/install/terminal/langs/rust.sh" ;;
@@ -28,9 +26,7 @@ echo "$SELECTED" | while IFS= read -r line; do
         python) source "$BASE_DIR/install/terminal/langs/python.sh" ;;
         java)   source "$BASE_DIR/install/terminal/langs/java.sh" ;;
         lua)    source "$BASE_DIR/install/terminal/langs/lua.sh" ;;
-        clang*)  source "$BASE_DIR/install/terminal/langs/clang.sh" ;;
+        clang*) source "$BASE_DIR/install/terminal/langs/clang.sh" ;;
         swift)  source "$BASE_DIR/install/terminal/langs/swift.sh" ;;
     esac
 done
-
-clear

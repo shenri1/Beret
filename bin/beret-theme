@@ -32,8 +32,13 @@ theme_exists() {
 }
 
 pick_theme() {
-  if command -v gum &>/dev/null; then
-    gum choose "${SUPPORTED_THEMES[@]}"
+  if command -v dialog &>/dev/null; then
+    source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+    local items=()
+    for t in "${SUPPORTED_THEMES[@]}"; do
+      items+=("$t" "")
+    done
+    beret_dialog_menu "Choose a theme" "${items[@]}"
   else
     echo "Available themes:"
     for i in "${!SUPPORTED_THEMES[@]}"; do

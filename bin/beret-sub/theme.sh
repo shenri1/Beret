@@ -1,17 +1,16 @@
 #!/usr/bin/env zsh
 
-THEME_NAMES=("Tokyo Night" "Catppuccin" "Nordic" "Gruvbox" "Rose Pine" "Materia Black" "Osaka Jade" "Kanagawa" "Custom (Aether)")
-THEME=$(gum choose "${THEME_NAMES[@]}" "<< Back" --header "Choose your theme" --height 12 | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
 
-# Normalize "custom-(aether)" -> "custom"
+THEME_NAMES=("Tokyo Night" "Catppuccin" "Nordic" "Gruvbox" "Rose Pine" "Materia Black" "Osaka Jade" "Kanagawa" "Custom (Aether)")
+THEME=$(beret_dialog_menu_from_gum "Choose your theme" "${THEME_NAMES[@]}" "<< Back" "Return to menu")
+
+[[ -z "$THEME" || "$THEME" == "<<"* ]] && return
+
 THEME="${THEME//-(aether)/}"
 
-if [ -n "$THEME" ] && [ "$THEME" != "<<-back" ]; then
-  if [[ "$THEME" == "custom" ]]; then
-    beret aether
-  else
-    beret-theme "$THEME"
-  fi
+if [[ "$THEME" == "custom" ]]; then
+  beret aether
+else
+  beret-theme "$THEME"
 fi
-
-source $BASE_DIR/bin/beret-sub/menu.sh

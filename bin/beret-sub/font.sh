@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+
 set_font(){
     local font_name=$1
     local url=$2
@@ -13,9 +15,7 @@ set_font(){
         cp "$file_name"/*."$file_type" ~/.local/share/fonts/
         rm -rf "$file_name.zip" "$file_name"
         fc-cache
-        cd -
-        clear
-        source $BASE_DIR/ascii.sh
+        cd - >/dev/null
     fi
 
 
@@ -30,7 +30,13 @@ set_font(){
 if [ "$#" -ge 1 ]; then
 	choice="$1"
 else
-	choice=$(gum choose "Cascadia Mono" "Fira Mono" "JetBrains Mono" "Meslo" "> Change size" "<< Back" --height 8 --header "Choose your programming font")
+	choice=$(beret_dialog_menu_from_gum "Choose your programming font" \
+		"Cascadia Mono" "" \
+		"Fira Mono" "" \
+		"JetBrains Mono" "" \
+		"Meslo" "" \
+		"> Change size" "Adjust terminal font size" \
+		"<< Back" "Return to menu")
 fi
 
 
@@ -48,9 +54,9 @@ case $choice in
 	set_font "MesloLGS Nerd Font" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Meslo.zip" "ttf"
 	;;
 "> Change size")
-	source $BASE_DIR/bin/beret-sub/font-size.sh
+	source "$BASE_DIR/bin/beret-sub/font-size.sh"
 	exit
 	;;
 esac
 
-source $BASE_DIR/bin/beret-sub/menu.sh
+source "$BASE_DIR/bin/beret-sub/menu.sh"

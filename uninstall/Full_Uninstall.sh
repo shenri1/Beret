@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 # Uninstall All Apps and Configurations (The complete Beret experience)
 
-gum confirm "This will remove ALMOST EVERYTHING installed by Beret. Are you sure?" || return
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+beret_dialog_confirm "This will remove ALMOST EVERYTHING installed by Beret. Are you sure?" || return
 
 # Terminal Apps
 for script in $BASE_DIR/uninstall/terminal/*.sh; do

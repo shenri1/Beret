@@ -1,0 +1,6 @@
+{
+  "show_indicator_icon": true,
+  "show_recent_apps": true,
+  "terminal_command": "alacritty",
+  "theme_name": "dark"
+}

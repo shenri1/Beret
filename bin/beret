@@ -63,27 +63,30 @@ show_component_picker() {
     "aether      Custom theme creator"
   )
 
-  if ! command -v gum &>/dev/null; then
-    echo "gum not found. Please install with: sudo dnf install gum"
+  if ! command -v dialog &>/dev/null; then
+    echo "dialog not found. Please install with: sudo dnf install dialog"
     echo "Or specify components directly: beret $action <component> ..."
     return 1
   fi
 
+  source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+
   local header
   if [[ "$action" == "install" ]]; then
-    header="Select components to install (Space to select, Enter to confirm):"
+    header="Select components to install (Enter to skip):"
   else
-    header="Select components to uninstall (Space to select, Enter to confirm):"
+    header="Select components to uninstall (Enter to skip):"
   fi
 
   local selected
-  selected=$(gum choose "${components[@]}" --no-limit --height 20 --header "$header")
+  selected=$(beret_dialog_checklist_from_gum "$header" "${components[@]}")
   if [[ -z "$selected" ]]; then
     return 0
   fi
 
   echo "$selected" | while IFS= read -r line; do
-    local component=$(echo "$line" | awk '{print $1}')
+    local line component
+    component=$(echo "$line" | awk '{print $1}')
     if [[ "$action" == "install" ]]; then
       install_component "$component"
     else
@@ -257,6 +260,7 @@ case "$COMMAND" in
       show_component_picker "install"
     else
       for component in "$@"; do
+        local component
         install_component "$component"
       done
     fi
@@ -266,6 +270,7 @@ case "$COMMAND" in
       show_component_picker "uninstall"
     else
       for component in "$@"; do
+        local component
         uninstall_component "$component"
       done
     fi
@@ -290,7 +295,7 @@ case "$COMMAND" in
     else
       sed -i "s/^size = .*$/size = $1/g" ~/.config/alacritty/font-size.toml 2>/dev/null || \
         echo "Warning: font-size.toml not found"
-      local vs_settings="$HOME/.config/Code/User/settings.json"
+      vs_settings="$HOME/.config/Code/User/settings.json"
       if [[ -f "$vs_settings" ]]; then
         sed -i "s/\"editor.fontSize\": [0-9]*/\"editor.fontSize\": $1/g" "$vs_settings"
         sed -i "s/\"terminal.integrated.fontSize\": [0-9]*/\"terminal.integrated.fontSize\": $1/g" "$vs_settings"
@@ -303,6 +308,7 @@ case "$COMMAND" in
       source "$BASE_DIR/bin/beret-sub/update.sh"
     else
       for component in "$@"; do
+        local component
         if [[ "$component" == "beret" ]]; then
           cd "$BASE_DIR" && git pull && cd - >/dev/null
         else

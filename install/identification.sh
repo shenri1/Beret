@@ -1,16 +1,9 @@
 #!/usr/bin/env zsh
 
-clear
+source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
 
-BERET_USER_NAME=$(gum input \
-  --prompt "Name > " \
-  --header "Type your full name" \
-  --width 40)
-
-BERET_USER_EMAIL=$(gum input \
-  --prompt "Email > " \
-  --header "your@email.com"  \
-  --width 40)
+BERET_USER_NAME=$(beret_dialog_input "Type your full name" "")
+BERET_USER_EMAIL=$(beret_dialog_input "Type your email address" "")
 
 export BERET_USER_NAME
 export BERET_USER_EMAIL

@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `beret theme <name>` — applies a theme to all supported apps at once
   - `beret font <name>` / `beret font-size <size>` — switches font and size via CLI
   - `beret update <component>` — updates a component (or `beret` for git pull)
-  - Without arguments, opens an interactive multi-select picker via `gum`
+  - Without arguments, opens an interactive picker via `dialog` (ncurses TUI)
   - `beret help` lists all available components and usage examples
 - **Browser install scripts** (`install/desktop/browser/`): Firefox (`dnf`), Chromium (`dnf`), Brave (official repo), Zen Browser (`flatpak`)
 - **Browser selection screen** (`browser/select.sh`) used during `desktop.sh` setup
