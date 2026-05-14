@@ -7,7 +7,7 @@ beret_die() {
 
 beret_valid_user() {
   local user="$1"
-  [[ "$user" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]
+  [[ "$user" =~ ^[a-z_][a-z0-9_.-]*[$]?$ ]]
 }
 
 beret_resolve_user_home() {
