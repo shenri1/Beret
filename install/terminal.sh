@@ -6,7 +6,6 @@ dnf install -y curl git unzip wget fd-find fzf bat whois ripgrep zoxide
 source "$BASE_DIR/install/terminal/a-shell.sh"
 
 for installer in "$BASE_DIR/install/terminal/required/"*.sh; do
-    local installer
     [[ -f "$installer" ]] || continue
     source "$installer"
 done
@@ -25,7 +24,6 @@ source "$BASE_DIR/install/terminal/dev-services.sh"
 
 # Run remaining terminal app installers
 for installer in "$BASE_DIR/install/terminal/"*.sh; do
-    local installer
     [[ -f "$installer" ]] || continue
     case "$installer" in
         */a-shell.sh)       continue ;;

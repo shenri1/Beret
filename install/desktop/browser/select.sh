@@ -12,8 +12,8 @@ BROWSER=$(beret_dialog_menu_from_gum "Choose your default browser:" \
 [[ -z "$BROWSER" || "$BROWSER" == Skip* ]] && return
 
 case "$BROWSER" in
-    "Firefox"*)  source "$BASE_DIR/install/desktop/browser/firefox.sh" ;;
-    "Chromium"*) source "$BASE_DIR/install/desktop/browser/chromium.sh" ;;
-    "Brave"*)    source "$BASE_DIR/install/desktop/browser/brave.sh" ;;
-    "Zen"*)      source "$BASE_DIR/install/desktop/browser/zen.sh" ;;
+    "Firefox"*)  source "$BASE_DIR/install/desktop/browser/app-firefox.sh" ;;
+    "Chromium"*) source "$BASE_DIR/install/desktop/browser/app-chromium.sh" ;;
+    "Brave"*)    source "$BASE_DIR/install/desktop/browser/app-brave.sh" ;;
+    "Zen"*)      source "$BASE_DIR/install/desktop/browser/app-zen.sh" ;;
 esac

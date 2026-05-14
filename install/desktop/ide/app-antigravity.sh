@@ -14,5 +14,4 @@ dnf makecache
 
 dnf install -y antigravity
 
-cd -
 echo "✓ Antigravity installed."

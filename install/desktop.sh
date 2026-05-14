@@ -29,7 +29,6 @@ SELECTED=$(beret_dialog_checklist_from_gum "Select optional apps to install (Ent
 
 if [[ -n "$SELECTED" ]]; then
     echo "$SELECTED" | while IFS= read -r line; do
-        local line app
         app=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
         case "$app" in
             discord)    source "$BASE_DIR/install/desktop/app-discord.sh" || true ;;

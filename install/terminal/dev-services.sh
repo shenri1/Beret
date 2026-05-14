@@ -15,7 +15,6 @@ SELECTED=$(beret_dialog_checklist_from_gum "Select development services to insta
 [[ -z "$SELECTED" ]] && return
 
 echo "$SELECTED" | while IFS= read -r line; do
-    local line svc
     svc=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
     case "$svc" in
         docker)

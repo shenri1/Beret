@@ -25,7 +25,7 @@ else
 
     case "$INSTALLER" in
     "beret")
-        cd "$HOME/.local/share/beret" && git pull && cd - >/dev/null
+        cd "$HOME/.local/share/beret" && git pull && cd - >/dev/null 2>&1 || true
         ;;
     "lazygit")
         source "$BASE_DIR/install/terminal/app-lazygit.sh"
@@ -40,10 +40,10 @@ else
         source "$BASE_DIR/install/terminal/app-zellij.sh"
         ;;
     "zen-browser")
-        source "$BASE_DIR/install/desktop/browser/zen.sh"
+        source "$BASE_DIR/install/desktop/browser/app-zen.sh"
         ;;
     "brave")
-        source "$BASE_DIR/install/desktop/browser/brave.sh"
+        source "$BASE_DIR/install/desktop/browser/app-brave.sh"
         ;;
     "cursor")
         source "$BASE_DIR/install/desktop/ide/app-cursor.sh"

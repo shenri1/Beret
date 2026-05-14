@@ -125,10 +125,10 @@ install_component() {
     vscode|code) run_installer "VS Code"     "$install_dir/desktop/ide/app-code.sh" ;;
     antigravity) run_installer "Antigravity" "$install_dir/desktop/ide/app-antigravity.sh" ;;
 
-    firefox)     run_installer "Firefox"     "$install_dir/desktop/browser/firefox.sh" ;;
-    chromium)    run_installer "Chromium"    "$install_dir/desktop/browser/chromium.sh" ;;
-    brave)       run_installer "Brave"       "$install_dir/desktop/browser/brave.sh" ;;
-    zen)         run_installer "Zen"         "$install_dir/desktop/browser/zen.sh" ;;
+    firefox)     run_installer "Firefox"     "$install_dir/desktop/browser/app-firefox.sh" ;;
+    chromium)    run_installer "Chromium"    "$install_dir/desktop/browser/app-chromium.sh" ;;
+    brave)       run_installer "Brave"       "$install_dir/desktop/browser/app-brave.sh" ;;
+    zen)         run_installer "Zen"         "$install_dir/desktop/browser/app-zen.sh" ;;
 
     neovim|nvim) run_installer "Neovim"      "$install_dir/terminal/app-neovim.sh" ;;
     zellij)      run_installer "Zellij"      "$install_dir/terminal/app-zellij.sh" ;;
@@ -264,7 +264,7 @@ case "$COMMAND" in
     if [[ "$EUID" -ne 0 ]]; then
       exec sudo zsh "$0" "$COMMAND" "$@"
     fi
-    ;;&
+    ;&
 esac
 
 case "$COMMAND" in
@@ -273,7 +273,6 @@ case "$COMMAND" in
       show_component_picker "install"
     else
       for component in "$@"; do
-        local component
         install_component "$component"
       done
     fi
@@ -283,7 +282,6 @@ case "$COMMAND" in
       show_component_picker "uninstall"
     else
       for component in "$@"; do
-        local component
         uninstall_component "$component"
       done
     fi
@@ -321,9 +319,8 @@ case "$COMMAND" in
       source "$BASE_DIR/bin/beret-sub/update.sh"
     else
       for component in "$@"; do
-        local component
         if [[ "$component" == "beret" ]]; then
-          cd "$BASE_DIR" && git pull && cd - >/dev/null
+          cd "$BASE_DIR" && git pull && cd - >/dev/null 2>&1 || true
         else
           update_component "$component"
         fi

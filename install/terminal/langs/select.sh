@@ -18,7 +18,6 @@ SELECTED=$(beret_dialog_checklist_from_gum "Select programming languages to inst
 [[ -z "$SELECTED" ]] && return
 
 echo "$SELECTED" | while IFS= read -r line; do
-    local line lang
     lang=$(echo "$line" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
     case "$lang" in
         rust)   source "$BASE_DIR/install/terminal/langs/rust.sh" ;;
