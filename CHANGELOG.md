@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2] - 2026-05-14
+
+### Security
+
+- Replaced `curl | sh` / `curl | zsh` installer flows for Rust, Zed, and OpenCode with TLS-only downloads to private temporary directories before execution.
+- Removed `eval echo ~$SUDO_USER` from the `beret` CLI and now resolves the invoking user's home directory through `getent`.
+- Added shared sudo-user validation for the main installer, rejecting root-shell execution and unsafe `SUDO_USER` values before privileged file operations.
+- Replaced the fixed `/tmp/beret-install.log` path with a random `mktemp` log file to avoid symlink/clobbering risks.
+- Switched downloaded archives and AppImages away from predictable filenames in `/tmp`, using per-run temporary directories for fonts, Go, Swift, Neovim, Zellij, Lazygit, Lazydocker, and Cursor.
+
+### Changed
+
+- Scripts now prefer the validated `USER_HOME` or resolve the user's home directory with `getent` instead of assuming `/home/$SUDO_USER`.
+- Removed unnecessary `cd /tmp` usage from the dialog installer.
+
 ## [0.1.1] — 2026-05-11
 
 ### Added

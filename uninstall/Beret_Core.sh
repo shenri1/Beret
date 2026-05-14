@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Uninstall Beret Core Files
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 rm -f /usr/local/bin/beret
 rm -f /usr/local/bin/beret-theme

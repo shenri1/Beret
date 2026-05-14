@@ -1,17 +1,19 @@
 #!/usr/bin/env zsh
 
-cd /tmp
-wget -O nvim.tar.gz "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
-tar -xf nvim.tar.gz
-install nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
-cp -R nvim-linux-x86_64/lib /usr/local/
-cp -R nvim-linux-x86_64/share /usr/local/
-rm -rf nvim-linux-x86_64 nvim.tar.gz
-cd -
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/beret-neovim.XXXXXXXXXX")" || return 1
+
+curl --proto '=https' --tlsv1.2 --fail --show-error --location \
+  --output "$tmp_dir/nvim.tar.gz" \
+  "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
+tar -xf "$tmp_dir/nvim.tar.gz" -C "$tmp_dir"
+install "$tmp_dir/nvim-linux-x86_64/bin/nvim" /usr/local/bin/nvim
+cp -R "$tmp_dir/nvim-linux-x86_64/lib" /usr/local/
+cp -R "$tmp_dir/nvim-linux-x86_64/share" /usr/local/
+rm -rf "$tmp_dir"
 
 dnf install -y luarocks tree-sitter-cli
 
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 if [[ ! -d "$USER_HOME/.config/nvim" ]]; then
   sudo -u "$SUDO_USER" git clone https://github.com/LazyVim/starter "$USER_HOME/.config/nvim"

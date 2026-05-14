@@ -19,7 +19,7 @@ dnf install -y code
 sudo -u "$SUDO_USER" code --install-extension enkia.tokyo-night --force 2>/dev/null || true
 
 # Apply default settings
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/Code/User"
 
 SETTINGS_FILE="$USER_HOME/.config/Code/User/settings.json"

@@ -1,16 +1,19 @@
 #!/usr/bin/env zsh
 
 ARCH=$(uname -m)
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/beret-swift.XXXXXXXXXX")" || return 1
 
-cd /tmp
-curl -LO "https://download.swift.org/swiftly/linux/swiftly-${ARCH}.tar.gz"
-tar -xzf "swiftly-${ARCH}.tar.gz"
-chown "$SUDO_USER:$SUDO_USER" swiftly "swiftly-${ARCH}.tar.gz" LICENSE.txt 2>/dev/null || true
+curl --proto '=https' --tlsv1.2 --fail --show-error --location \
+  --output "$tmp_dir/swiftly-${ARCH}.tar.gz" \
+  "https://download.swift.org/swiftly/linux/swiftly-${ARCH}.tar.gz"
+tar -xzf "$tmp_dir/swiftly-${ARCH}.tar.gz" -C "$tmp_dir"
+chown "$SUDO_USER:$SUDO_USER" "$tmp_dir/swiftly" "$tmp_dir/swiftly-${ARCH}.tar.gz" "$tmp_dir/LICENSE.txt" 2>/dev/null || true
 
 export ARCH
+export tmp_dir
 
 sudo -u "$SUDO_USER" zsh -c '
-  cd /tmp
+  cd "$tmp_dir"
   ./swiftly init --assume-yes --quiet-shell-followup
   rm -f "swiftly-${ARCH}.tar.gz" swiftly LICENSE.txt .swift-version
 
@@ -20,4 +23,4 @@ sudo -u "$SUDO_USER" zsh -c '
   fi
 '
 
-cd -
+rm -rf "$tmp_dir"

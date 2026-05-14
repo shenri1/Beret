@@ -1,9 +1,22 @@
 #!/usr/bin/env zsh
 
 if [[ "$EUID" -eq 0 && -n "${SUDO_USER:-}" ]]; then
-  export BASE_DIR="$(eval echo ~$SUDO_USER)/.local/share/beret"
+  if [[ ! "$SUDO_USER" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
+    echo "ERROR: Invalid SUDO_USER '$SUDO_USER'." >&2
+    exit 1
+  fi
+
+  USER_HOME="$(getent passwd "$SUDO_USER" | cut -d: -f6)"
+  if [[ -z "$USER_HOME" || "$USER_HOME" == "/" || ! -d "$USER_HOME" ]]; then
+    echo "ERROR: Could not resolve a safe home directory for '$SUDO_USER'." >&2
+    exit 1
+  fi
+
+  export USER_HOME
+  export BASE_DIR="$USER_HOME/.local/share/beret"
   export SUDO_USER="${SUDO_USER}"
 else
+  export USER_HOME="$HOME"
   export BASE_DIR="$HOME/.local/share/beret"
 fi
 

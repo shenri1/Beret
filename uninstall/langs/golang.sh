@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Uninstall Go
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 if [ -d "$USER_HOME/.local/share/go" ]; then
     rm -rf "$USER_HOME/.local/share/go"

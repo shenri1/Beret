@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Uninstall Zed
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 rm -f /usr/local/bin/zed "$USER_HOME/.local/bin/zed"
 rm -rf "$USER_HOME/.local/share/zed"
 rm -rf "$USER_HOME/.config/zed"

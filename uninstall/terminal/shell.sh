@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Uninstall Shell configuration (Zsh)
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 # Restore backups if they exist
 [ -f "$USER_HOME/.zshrc.bak" ] && mv "$USER_HOME/.zshrc.bak" "$USER_HOME/.zshrc"

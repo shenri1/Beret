@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 # Uninstall Programming Languages
 
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 # Rust
 if [ -d "$USER_HOME/.rustup" ]; then

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Uninstall Rust
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 if [ -d "$USER_HOME/.rustup" ]; then
     sudo -u "$SUDO_USER" "$USER_HOME/.cargo/bin/rustup" self uninstall -y 2>/dev/null || \

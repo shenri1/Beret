@@ -2,20 +2,19 @@
 
 echo "Installing Cursor..."
 
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
-CURSOR_LATEST=$(curl -s "https://api.github.com/repos/getcursor/cursor/releases/latest" \
-    | grep -Po '"tag_name": "\K[^"]*' | head -1)
-
-cd /tmp
-curl -sLo cursor.AppImage \
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/beret-cursor.XXXXXXXXXX")" || return 1
+curl --proto '=https' --tlsv1.2 --fail --show-error --location \
+    --output "$tmp_dir/cursor.AppImage" \
     "https://downloader.cursor.sh/linux/appImage/x64" \
     || { echo "⚠ Could not download Cursor."; return 1; }
 
-chmod +x cursor.AppImage
+chmod +x "$tmp_dir/cursor.AppImage"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.local/bin"
-mv cursor.AppImage "$USER_HOME/.local/bin/cursor"
+mv "$tmp_dir/cursor.AppImage" "$USER_HOME/.local/bin/cursor"
 chown "$SUDO_USER:$SUDO_USER" "$USER_HOME/.local/bin/cursor"
+rm -rf "$tmp_dir"
 
 # Add ~/.local/bin to PATH if not already there
 sudo -u "$SUDO_USER" zsh -c '
@@ -35,5 +34,4 @@ Categories=Development;IDE;TextEditor;
 MimeType=text/plain;inode/directory;
 DESKTOP
 
-cd -
 echo "✓ Cursor installed."

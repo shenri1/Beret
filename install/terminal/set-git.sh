@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 sudo -u "$SUDO_USER" git config --global init.defaultBranch main
 sudo -u "$SUDO_USER" git config --global alias.co checkout

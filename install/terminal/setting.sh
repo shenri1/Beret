@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.local/share/applications"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config"

@@ -3,26 +3,26 @@
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 export BASE_DIR
 
+source "$BASE_DIR/bin/beret-sub/security.sh"
+beret_setup_user_context || exit 1
+
 if ! command -v zsh &>/dev/null; then
   dnf install -y zsh
 fi
+
+for required_cmd in curl unzip; do
+  if ! command -v "$required_cmd" &>/dev/null; then
+    dnf install -y "$required_cmd"
+  fi
+done
 
 if [[ -z "$BERET_ZSH" ]]; then
   export BERET_ZSH=1
   exec zsh "$0" "$@"
 fi
 
-# Ensure we have the real user context
-if [[ -z "$SUDO_USER" ]]; then
-  echo "ERROR: This script must be run with 'sudo ./install.sh' from your user account."
-  echo "Do NOT use 'sudo su' first."
-  exit 1
-fi
-
-export USER_HOME="/home/$SUDO_USER"
-export SUDO_USER="${SUDO_USER}"
-
-LOG_FILE="/tmp/beret-install.log"
+LOG_FILE="$(mktemp "${TMPDIR:-/tmp}/beret-install.XXXXXXXX.log")"
+echo "Logging install output to $LOG_FILE"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 source "$BASE_DIR/install/check-version.sh"

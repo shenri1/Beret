@@ -4,7 +4,7 @@ echo "Installing Aether..."
 
 dnf install -y gjs gtk4 libadwaita ImageMagick libsoup3
 
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 AETHER_DIR="$USER_HOME/.local/share/aether"
 
 if [[ ! -d "$AETHER_DIR" ]]; then

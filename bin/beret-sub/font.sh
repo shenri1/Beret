@@ -8,14 +8,16 @@ set_font(){
     local file_type=$3
     local file_name="${font_name/ Nerd Font/}"
 
-    if ! $(fc-list | grep -i "${font_name}" > /dev/null); then
-        cd /tmp
-        wget -O "$file_name.zip" "$url"
-        unzip "$file_name.zip" -d "$file_name"
-        cp "$file_name"/*."$file_type" ~/.local/share/fonts/
-        rm -rf "$file_name.zip" "$file_name"
+    if ! fc-list | grep -qi "${font_name}"; then
+        local tmp_dir
+        tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/beret-font.XXXXXXXXXX")" || return 1
+        curl --proto '=https' --tlsv1.2 --fail --show-error --location \
+            --output "$tmp_dir/$file_name.zip" \
+            "$url"
+        unzip "$tmp_dir/$file_name.zip" -d "$tmp_dir/$file_name"
+        cp "$tmp_dir/$file_name"/*."$file_type" ~/.local/share/fonts/
+        rm -rf "$tmp_dir"
         fc-cache
-        cd - >/dev/null
     fi
 
 

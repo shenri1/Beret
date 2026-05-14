@@ -2,7 +2,7 @@
 
 dnf install -y xournalpp
 
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="${USER_HOME:-$(getent passwd "$SUDO_USER" | cut -d: -f6)}"
 sudo -u "$SUDO_USER" mkdir -p "$USER_HOME/.config/xournalpp"
 
 if [[ ! -f "$USER_HOME/.config/xournalpp/settings.xml" ]]; then
