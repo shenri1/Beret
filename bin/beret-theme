@@ -32,7 +32,7 @@ theme_exists() {
 }
 
 pick_theme() {
-  if command -v fzf &>/dev/null; then
+  if command -v gum &>/dev/null; then
     source "$BERET_DIR/bin/beret-sub/dialog-helpers.sh"
     local items=()
     for t in "${SUPPORTED_THEMES[@]}"; do
@@ -40,12 +40,8 @@ pick_theme() {
     done
     beret_dialog_menu "Choose a theme" "${items[@]}"
   else
-    echo "Available themes:"
-    for i in "${!SUPPORTED_THEMES[@]}"; do
-      printf "  %d) %s\n" "$((i+1))" "${SUPPORTED_THEMES[$i]}"
-    done
-    read -rp "Pick a number: " n
-    echo "${SUPPORTED_THEMES[$((n-1))]}"
+    echo "gum not found. Please install with: sudo dnf install gum"
+    return 1
   fi
 }
 

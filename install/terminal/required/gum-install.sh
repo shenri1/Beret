@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 
-dnf install -y fzf
+dnf install -y gum

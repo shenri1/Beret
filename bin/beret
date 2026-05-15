@@ -76,8 +76,8 @@ show_component_picker() {
     "aether      Custom theme creator"
   )
 
-  if ! command -v fzf &>/dev/null; then
-    echo "fzf not found. Please install with: sudo dnf install fzf"
+  if ! command -v gum &>/dev/null; then
+    echo "gum not found. Please install with: sudo dnf install gum"
     echo "Or specify components directly: beret $action <component> ..."
     return 1
   fi
