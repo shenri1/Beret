@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-dnf install -y curl git unzip wget fd-find fzf bat whois ripgrep zoxide
+dnf install -y curl git unzip wget fd-find bat whois ripgrep zoxide
 
 # Run shell setup first so .zshrc is properly configured before anything appends to it
 source "$BASE_DIR/install/terminal/a-shell.sh"

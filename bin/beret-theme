@@ -32,7 +32,7 @@ theme_exists() {
 }
 
 pick_theme() {
-  if command -v dialog &>/dev/null; then
+  if command -v fzf &>/dev/null; then
     source "$BERET_DIR/bin/beret-sub/dialog-helpers.sh"
     local items=()
     for t in "${SUPPORTED_THEMES[@]}"; do

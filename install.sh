@@ -26,7 +26,7 @@ echo "Logging install output to $LOG_FILE"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 source "$BASE_DIR/install/check-version.sh"
-source "$BASE_DIR/install/terminal/required/dialog-install.sh" >/dev/null
+source "$BASE_DIR/install/terminal/required/fzf-install.sh" >/dev/null
 source "$BASE_DIR/install/identification.sh"
 source "$BASE_DIR/install/optimizations.sh"
 source "$BASE_DIR/install/debloat.sh"

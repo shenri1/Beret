@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
-# dialog-helpers.sh — compatibility layer to replace gum with dialog
-# Source this file to get gum-like functions backed by dialog
+# dialog-helpers.sh — compatibility layer to replace dialog with fzf
+# Source this file to get gum-like functions backed by fzf
 
-# Check dialog availability
-if ! command -v dialog &>/dev/null; then
-  echo "dialog not found. Install with: sudo dnf install dialog"
+# Check fzf availability
+if ! command -v fzf &>/dev/null; then
+  echo "fzf not found. Install with: sudo dnf install fzf"
 fi
 
 # ── single-select menu ───────────────────────────────────────────────────────
@@ -13,17 +13,21 @@ fi
 beret_dialog_menu() {
   local title="$1"
   shift
-  local items=()
+  local lines=()
   while [[ $# -ge 2 ]]; do
-    items+=("$1" "$2")
+    local tag="$1"
+    local desc="$2"
+    if [[ -n "$desc" ]]; then
+      lines+=("${tag} — ${desc}")
+    else
+      lines+=("${tag}")
+    fi
     shift 2
   done
-  local tmpfile=$(mktemp)
-  dialog --clear --menu "$title" 0 0 0 "${items[@]}" 2> "$tmpfile"
-  local ret=$?
-  cat "$tmpfile"
-  rm -f "$tmpfile"
-  return $ret
+  local selected
+  selected=$(printf '%s\n' "${lines[@]}" | fzf --prompt="${title}: " --height=~50% --layout=reverse --border)
+  [[ -z "$selected" ]] && return 1
+  echo "$selected" | sed 's/ —.*//'
 }
 
 # ── multi-select checklist ───────────────────────────────────────────────────
@@ -32,19 +36,21 @@ beret_dialog_menu() {
 beret_dialog_checklist() {
   local title="$1"
   shift
-  local items=()
+  local lines=()
   while [[ $# -ge 2 ]]; do
-    items+=("$1" "$2" "off")
+    local tag="$1"
+    local desc="$2"
+    if [[ -n "$desc" ]]; then
+      lines+=("${tag} — ${desc}")
+    else
+      lines+=("${tag}")
+    fi
     shift 2
   done
-  local tmpfile=$(mktemp)
-  dialog --clear --checklist "$title" 0 0 0 "${items[@]}" 2> "$tmpfile"
-  local ret=$?
-  # dialog returns quoted space-separated tags like "tag1" "tag2"
-  # convert to newline-separated
-  sed 's/"//g' "$tmpfile" | tr ' ' '\n'
-  rm -f "$tmpfile"
-  return $ret
+  local selected
+  selected=$(printf '%s\n' "${lines[@]}" | fzf -m --prompt="${title}: " --height=~50% --layout=reverse --border)
+  [[ -z "$selected" ]] && return 1
+  echo "$selected" | sed 's/ —.*//'
 }
 
 # ── text input ───────────────────────────────────────────────────────────────
@@ -52,24 +58,28 @@ beret_dialog_checklist() {
 beret_dialog_input() {
   local title="$1"
   local default="${2:-}"
-  local tmpfile=$(mktemp)
-  dialog --clear --inputbox "$title" 0 0 "$default" 2> "$tmpfile"
-  local ret=$?
-  cat "$tmpfile"
-  rm -f "$tmpfile"
-  return $ret
+  local result
+  if [[ -n "$default" ]]; then
+    read -rp "${title} [${default}]: " result
+    [[ -z "$result" ]] && result="$default"
+  else
+    read -rp "${title}: " result
+  fi
+  echo "$result"
 }
 
 # ── yes/no confirm ───────────────────────────────────────────────────────────
 # Usage: beret_dialog_confirm "Question text"
 beret_dialog_confirm() {
-  dialog --clear --yesno "$1" 0 0
+  local result
+  result=$(printf "Yes\nNo\n" | fzf --prompt="$1 " --height=~20% --layout=reverse --border)
+  [[ "$result" == "Yes" ]]
 }
 
 # ── info/progress box ────────────────────────────────────────────────────────
 # Usage: beret_dialog_info "Message"
 beret_dialog_info() {
-  dialog --clear --infobox "$1" 3 50
+  echo "$1"
 }
 
 # ── gum-compatible wrappers (accept same format as gum choose) ───────────────
@@ -79,20 +89,10 @@ beret_dialog_info() {
 beret_dialog_checklist_from_gum() {
   local title="$1"
   shift
-  local items=()
-  local opt
-  for opt in "$@"; do
-    local tag=$(echo "$opt" | awk '{print $1}')
-    local desc="${opt#${tag}}"
-    desc=$(echo "$desc" | sed 's/^[[:space:]]*//')
-    items+=("$tag" "$desc" "off")
-  done
-  local tmpfile=$(mktemp)
-  dialog --clear --checklist "$title" 0 0 0 "${items[@]}" 2> "$tmpfile"
-  local ret=$?
-  sed 's/"//g' "$tmpfile" | tr ' ' '\n'
-  rm -f "$tmpfile"
-  return $ret
+  local selected
+  selected=$(printf '%s\n' "$@" | fzf -m --prompt="${title}: " --height=~50% --layout=reverse --border)
+  [[ -z "$selected" ]] && return 1
+  echo "$selected"
 }
 
 # Single-select from gum-style options
@@ -100,18 +100,8 @@ beret_dialog_checklist_from_gum() {
 beret_dialog_menu_from_gum() {
   local title="$1"
   shift
-  local items=()
-  local opt
-  for opt in "$@"; do
-    local tag=$(echo "$opt" | awk '{print $1}')
-    local desc="${opt#${tag}}"
-    desc=$(echo "$desc" | sed 's/^[[:space:]]*//')
-    items+=("$tag" "$desc")
-  done
-  local tmpfile=$(mktemp)
-  dialog --clear --menu "$title" 0 0 0 "${items[@]}" 2> "$tmpfile"
-  local ret=$?
-  cat "$tmpfile"
-  rm -f "$tmpfile"
-  return $ret
+  local selected
+  selected=$(printf '%s\n' "$@" | fzf --prompt="${title}: " --height=~50% --layout=reverse --border)
+  [[ -z "$selected" ]] && return 1
+  echo "$selected"
 }

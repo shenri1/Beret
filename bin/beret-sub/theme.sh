@@ -7,7 +7,14 @@ THEME=$(beret_dialog_menu_from_gum "Choose your theme" "${THEME_NAMES[@]}" "<< B
 
 [[ -z "$THEME" || "$THEME" == "<<"* ]] && return
 
-THEME="${THEME//-(aether)/}"
+case "$THEME" in
+  "Tokyo Night")     THEME="tokyo-night" ;;
+  "Rose Pine")       THEME="rose-pine" ;;
+  "Materia Black")   THEME="materia-black" ;;
+  "Osaka Jade")      THEME="osaka-jade" ;;
+  "Custom (Aether)") THEME="custom" ;;
+  *)                 THEME=$(echo "$THEME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-') ;;
+esac
 
 if [[ "$THEME" == "custom" ]]; then
   beret aether

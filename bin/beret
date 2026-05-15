@@ -76,8 +76,8 @@ show_component_picker() {
     "aether      Custom theme creator"
   )
 
-  if ! command -v dialog &>/dev/null; then
-    echo "dialog not found. Please install with: sudo dnf install dialog"
+  if ! command -v fzf &>/dev/null; then
+    echo "fzf not found. Please install with: sudo dnf install fzf"
     echo "Or specify components directly: beret $action <component> ..."
     return 1
   fi
