@@ -19,8 +19,6 @@ AETHER_KITTY="${AETHER_KITTY:-}"
 JSON_INPUT=""
 THEME_NAME="custom"
 
-# ── helpers ──────────────────────────────────────────────────────────────────
-
 die() { echo "error: $*" >&2; exit 1; }
 
 hex_to_rgb() {
@@ -93,8 +91,6 @@ for k, v in d.items():
     COLORS["$key"]="$val"
   done <<< "$json_keys"
 }
-
-# ── generators ───────────────────────────────────────────────────────────────
 
 generate_alacritty() {
   local bg="${COLORS[background]}"
@@ -498,8 +494,6 @@ fi
 EOF
   chmod +x "$CUSTOM_DIR/vscode.sh" 2>/dev/null || true
 }
-
-# ── main ─────────────────────────────────────────────────────────────────────
 
 # Auto-detect Aether's kitty.conf
 if [[ -z "$AETHER_KITTY" ]]; then

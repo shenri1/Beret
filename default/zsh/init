@@ -13,8 +13,6 @@ if command -v fzf &>/dev/null; then
   fi
 fi
 
-# ── ZLE keyboard shortcuts ────────────────────────────────────────────────────
-
 # Ctrl+A — move to beginning of line (standard) / select all command text
 # ZSH already binds Ctrl+A to beginning-of-line by default in emacs mode
 bindkey -e

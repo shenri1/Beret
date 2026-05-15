@@ -19,7 +19,6 @@ SUPPORTED_THEMES=(
   tokyo-night
 )
 
-# ── helpers ──────────────────────────────────────────────────────────────────
 
 die() { echo "error: $*" >&2; exit 1; }
 
@@ -44,8 +43,6 @@ pick_theme() {
     return 1
   fi
 }
-
-# ── appliers ─────────────────────────────────────────────────────────────────
 
 apply_alacritty() {
   local theme="$1"
@@ -115,8 +112,6 @@ apply_vscode() {
 
   echo "  vscode: no vscode.sh for '$theme', skipping"
 }
-
-# ── main ─────────────────────────────────────────────────────────────────────
 
 THEME="${1:-}"
 

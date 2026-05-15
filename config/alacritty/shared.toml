@@ -1,4 +1,3 @@
-# ── Window ────────────────────────────────────────────────────────────────────
 [window]
 decorations        = "full"
 dynamic_title      = false          # title managed by zellij/prompt, not alacritty
@@ -10,16 +9,13 @@ padding.y          = 0
 columns = 0
 lines   = 0
 
-# ── Shell ─────────────────────────────────────────────────────────────────
 [terminal.shell]
 program = "zellij"
 
-# ── Scrolling ─────────────────────────────────────────────────────────────────
 [scrolling]
 history    = 0          # zellij manages its own scrollback
 multiplier = 3
 
-# ── Mouse ─────────────────────────────────────────────────────────────────────
 [mouse]
 hide_when_typing = true
 

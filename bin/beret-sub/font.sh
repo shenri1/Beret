@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 source "$BASE_DIR/bin/beret-sub/dialog-helpers.sh"
+source "$BASE_DIR/bin/beret-sub/config-helpers.sh"
 
 set_font(){
     local font_name=$1
@@ -20,13 +21,9 @@ set_font(){
         fc-cache
     fi
 
-
-    cp "$BASE_DIR/config/alacritty/fonts/$file_name.toml" ~/.config/alacritty/font.toml
-    local vs_settings="$HOME/.config/Code/User/settings.json"
-    if [[ -f "$vs_settings" ]]; then
-        sed -i "s/\"editor.fontFamily\": \".*\"/\"editor.fontFamily\": \"$font_name\"/g" "$vs_settings"
-        sed -i "s/\"terminal.integrated.fontFamily\": \".*\"/\"terminal.integrated.fontFamily\": \"$font_name\"/g" "$vs_settings"
-    fi
+    beret_alacritty_set_font "$BASE_DIR/config/alacritty/fonts/$file_name.toml"
+    beret_vscode_set_setting "editor.fontFamily" "\"$font_name\""
+    beret_vscode_set_setting "terminal.integrated.fontFamily" "\"$font_name\""
 }
 
 if [ "$#" -ge 1 ]; then
